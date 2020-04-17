@@ -7,6 +7,8 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import java.util.ArrayList;
+
 /**
  * The {@code Tetris} class is responsible for handling much of the game logic and
  * reading user input.
@@ -112,11 +114,18 @@ public class Tetris extends JFrame {
 	 * The speed of the game.
 	 */
 	private float gameSpeed;
+	
+	/**
+	 * 2020-04-17 Seungun-Park
+	 * Tetris bag
+	 */
+	private ArrayList<Integer> tetrisBag;
 		
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
 	 * and adds a controller listener.
 	 */
+	
 	private Tetris() {
 		/*
 		 * Set the basic properties of the window.
@@ -131,6 +140,7 @@ public class Tetris extends JFrame {
 		 */
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
+		this.tetrisBag = new ArrayList<Integer>();
 		
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
@@ -387,13 +397,35 @@ public class Tetris extends JFrame {
 		this.level = 1;
 		this.score = 0;
 		this.gameSpeed = 1.0f;
-		this.nextType = TileType.values()[random.nextInt(TYPE_COUNT)];
 		this.isNewGame = false;
-		this.isGameOver = false;		
+		this.isGameOver = false;	
+		this.tetrisBag.clear();
+		this.nextType = TileType.values()[nextTetromino()];
 		board.clear();
 		logicTimer.reset();
 		logicTimer.setCyclesPerSecond(gameSpeed);
 		spawnPiece();
+	}
+	
+	/**
+	 * 2020-04-17 Seungun-Park
+	 * tetris bag
+	 * The nextType is a Type that has not been selected in the last seven times.
+	 */
+	private int nextTetromino() {
+		/*
+		 * ArrayList has elements of Type
+		 * select a random element and remove the element
+		 */
+		if(tetrisBag.isEmpty())
+			for(int i = 0; i < TYPE_COUNT; i++)
+				tetrisBag.add(i);
+		
+		int nextIdx = random.nextInt(tetrisBag.size());
+		int nextType = tetrisBag.get(nextIdx);
+		tetrisBag.remove(nextIdx);
+		
+		return nextType;
 	}
 		
 	/**
@@ -409,7 +441,7 @@ public class Tetris extends JFrame {
 		this.currentCol = currentType.getSpawnColumn();
 		this.currentRow = currentType.getSpawnRow();
 		this.currentRotation = 0;
-		this.nextType = TileType.values()[random.nextInt(TYPE_COUNT)];
+		this.nextType = TileType.values()[nextTetromino()];
 		
 		/*
 		 * If the spawn point is invalid, we need to pause the game and flag that we've lost
