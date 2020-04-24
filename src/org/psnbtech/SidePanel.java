@@ -39,7 +39,7 @@ public class SidePanel extends JPanel {
 	/**
 	 * The center x of the next piece preview box.
 	 */
-	private static final int SQUARE_CENTER_X = 130;
+	private static final int SQUARE_CENTER_X = 70;
 	
 	/**
 	 * The center y of the next piece preview box.
@@ -50,6 +50,11 @@ public class SidePanel extends JPanel {
 	 * The size of the next piece preview box.
 	 */
 	private static final int SQUARE_SIZE = (TILE_SIZE * TILE_COUNT >> 1);
+
+	/**
+	 * The number of pixels used on a small insets (generally used for categories).
+	 */
+	private static final int SMALLEST_INSET = 10;
 	
 	/**
 	 * The number of pixels used on a small insets (generally used for categories).
@@ -147,14 +152,23 @@ public class SidePanel extends JPanel {
 		 * Draw the next piece preview box.
 		 */
 		g.setFont(LARGE_FONT);
-		g.drawString("Next Piece:", SMALL_INSET, 70);
-		g.drawRect(SQUARE_CENTER_X - SQUARE_SIZE, SQUARE_CENTER_Y - SQUARE_SIZE, SQUARE_SIZE * 2, SQUARE_SIZE * 2);
+		g.drawString("NEXT", SQUARE_CENTER_X - ( SQUARE_SIZE + SMALLEST_INSET ), SQUARE_CENTER_Y - ( SQUARE_SIZE + SMALLEST_INSET ));
+		g.drawRect(SQUARE_CENTER_X - ( SQUARE_SIZE + SMALLEST_INSET ) , SQUARE_CENTER_Y - SQUARE_SIZE, SQUARE_SIZE * 2, SQUARE_SIZE * 2);
+
+		/*
+		 * Draw the hold piece box
+		 */
+		g.setFont(LARGE_FONT);
+		g.drawString("HOLD", SQUARE_CENTER_X + ( SQUARE_SIZE + SMALLEST_INSET ), SQUARE_CENTER_Y - ( SQUARE_SIZE + SMALLEST_INSET ));
+		g.drawRect(SQUARE_CENTER_X + ( SQUARE_SIZE + SMALLEST_INSET ), SQUARE_CENTER_Y - SQUARE_SIZE, SQUARE_SIZE * 2, SQUARE_SIZE * 2);
 		
 		/*
 		 * Draw a preview of the next piece that will be spawned. The code is pretty much
 		 * identical to the drawing code on the board, just smaller and centered, rather
 		 * than constrained to a grid.
 		 */
+
+		// TODO getNextPieceType()..!
 		TileType type = tetris.getNextPieceType();
 		if(!tetris.isGameOver() && type != null) {
 			/*
@@ -167,7 +181,7 @@ public class SidePanel extends JPanel {
 			/*
 			 * Calculate the top left corner (origin) of the piece.
 			 */
-			int startX = (SQUARE_CENTER_X - (cols * TILE_SIZE / 2));
+			int startX = (SQUARE_CENTER_X - SMALLEST_INSET - (cols * TILE_SIZE / 2));
 			int startY = (SQUARE_CENTER_Y - (rows * TILE_SIZE / 2));
 		
 			/*
