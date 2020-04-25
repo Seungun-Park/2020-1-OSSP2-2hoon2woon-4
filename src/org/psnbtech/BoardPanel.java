@@ -60,32 +60,32 @@ public class BoardPanel extends JPanel {
 	/**
 	 * The number of pixels that a tile takes up.
 	 */
-	public static final int TILE_SIZE = 24;
+	public static int TILE_SIZE = 24;
 	
 	/**
 	 * The width of the shading on the tiles.
 	 */
-	public static final int SHADE_WIDTH = 4;
+	public static int SHADE_WIDTH = TILE_SIZE / 6;
 	
 	/**
 	 * The central x coordinate on the game board.
 	 */
-	private static final int CENTER_X = COL_COUNT * TILE_SIZE / 2;
+	private static int CENTER_X = COL_COUNT * TILE_SIZE / 2;
 	
 	/**
 	 * The central y coordinate on the game board.
 	 */
-	private static final int CENTER_Y = VISIBLE_ROW_COUNT * TILE_SIZE / 2;
+	private static int CENTER_Y = VISIBLE_ROW_COUNT * TILE_SIZE / 2;
 		
 	/**
 	 * The total width of the panel.
 	 */
-	public static final int PANEL_WIDTH = COL_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
+	public static int PANEL_WIDTH = COL_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
 	
 	/**
 	 * The total height of the panel.
 	 */
-	public static final int PANEL_HEIGHT = VISIBLE_ROW_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
+	public static int PANEL_HEIGHT = VISIBLE_ROW_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
 	
 	/**
 	 * The larger font to display.
@@ -101,11 +101,18 @@ public class BoardPanel extends JPanel {
 	 * The Tetris instance.
 	 */
 	private Tetris tetris;
-	
+
 	/**
 	 * The tiles that make up the board.
 	 */
 	private TileType[][] tiles;
+	
+	/**
+	 * 2020-04-22 Seungun-Park
+	 * panel resize
+	 */
+	private static Dimension d_start;
+	private static Dimension d_now;
 		
 	/**
 	 * Crates a new GameBoard instance.
@@ -115,8 +122,27 @@ public class BoardPanel extends JPanel {
 		this.tetris = tetris;
 		this.tiles = new TileType[ROW_COUNT][COL_COUNT];
 		
-		setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+		d_start = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
+		setPreferredSize(d_start);
 		setBackground(Color.BLACK);
+	}
+	
+	/**
+	 * 2020-04-22 Seungun-Park
+	 * panel resize
+	 */
+	public Dimension resize() {
+		d_now = getSize();
+		double ratio = (d_now.getHeight() / d_start.getHeight()) < (d_now.getWidth() / d_start.getWidth()) ? (d_now.getHeight()/ d_start.getHeight()) : (d_now.getWidth() / d_start.getWidth());
+		TILE_SIZE = (int)(24.0 * ratio);
+		SHADE_WIDTH = TILE_SIZE / 6;
+		CENTER_X = COL_COUNT * TILE_SIZE / 2;
+		CENTER_Y = VISIBLE_ROW_COUNT * TILE_SIZE / 2;
+		PANEL_WIDTH = COL_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
+		PANEL_HEIGHT = VISIBLE_ROW_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
+		d_now.setSize(PANEL_WIDTH, PANEL_HEIGHT);
+		setPreferredSize(d_now);
+		return d_now;
 	}
 	
 	/**
@@ -434,4 +460,7 @@ public class BoardPanel extends JPanel {
 		}
 	}
 
+		public Dimension getDim() {
+			return d_start;
+		}
 }

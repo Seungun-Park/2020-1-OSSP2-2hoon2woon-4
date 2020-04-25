@@ -1,6 +1,7 @@
 package org.psnbtech;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -133,7 +134,7 @@ public class Tetris extends JFrame {
 		super("Tetris");
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
+		setResizable(true);
 		
 		/*
 		 * Initialize the BoardPanel and SidePanel instances.
@@ -267,6 +268,7 @@ public class Tetris extends JFrame {
 		 * center the window on the screen, and show it to the user.
 		 */
 		pack();
+		setMinimumSize(getSize());
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -385,7 +387,10 @@ public class Tetris extends JFrame {
 	 * Forces the BoardPanel and SidePanel to repaint.
 	 */
 	private void renderGame() {
+		Dimension d_board, d_side;
+		d_board = board.resize();
 		board.repaint();
+		d_side = side.resize();
 		side.repaint();
 	}
 	

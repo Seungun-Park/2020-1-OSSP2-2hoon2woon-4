@@ -97,14 +97,29 @@ public class SidePanel extends JPanel {
 	private Tetris tetris;
 	
 	/**
+	 * 2020-04-22 Seungun-Park
+	 * panel resize
+	 */
+	private static Dimension d_start;
+	
+	/**
 	 * Creates a new SidePanel and sets it's display properties.
 	 * @param tetris The Tetris instance to use.
 	 */
 	public SidePanel(Tetris tetris) {
 		this.tetris = tetris;
 		
-		setPreferredSize(new Dimension(200, BoardPanel.PANEL_HEIGHT));
+		d_start = new Dimension(200, BoardPanel.PANEL_HEIGHT);
+		setPreferredSize(d_start);
 		setBackground(Color.BLACK);
+	}
+	
+	/**
+	 * 2020-04-22 Seungun-Park
+	 * panel resize
+	 */
+	public Dimension resize() {
+		return d_start;
 	}
 	
 	@Override
@@ -223,4 +238,7 @@ public class SidePanel extends JPanel {
 		}
 	}
 	
+	public Dimension getDim() {
+		return d_start;
+	}
 }
