@@ -1,6 +1,7 @@
 package org.psnbtech;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -121,6 +122,14 @@ public class Tetris extends JFrame {
 	 * Tetris bag
 	 */
 	private ArrayList<Integer> tetrisBag;
+	
+	/**
+	 * 2020-04-25 Seungun-Park
+	 * resize
+	 */
+	private Dimension d_start;
+	private Dimension d_now;
+	private static int pack_timer = 0;
 		
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
@@ -132,7 +141,7 @@ public class Tetris extends JFrame {
 		 * Set the basic properties of the window.
 		 */
 		super("Tetris");
-		setLayout(new BorderLayout());
+		setLayout(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(true);
 		
@@ -146,8 +155,8 @@ public class Tetris extends JFrame {
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
 		 */
-		add(board, BorderLayout.CENTER);
-		add(side, BorderLayout.EAST);
+		add(board);
+		add(side);
 		
 		/*
 		 * Adds a custom anonymous KeyListener to the frame.
@@ -284,10 +293,13 @@ public class Tetris extends JFrame {
 		 * Here we resize the frame to hold the BoardPanel and SidePanel instances,
 		 * center the window on the screen, and show it to the user.
 		 */
-		pack();
-		setMinimumSize(getSize());
+		getContentPane().setBackground(Color.BLACK);
+		setSize(board.getWidth() + side.getWidth()*2, board.getHeight()+39);
+		d_start = getSize();
+		setMinimumSize(d_start);
 		setLocationRelativeTo(null);
 		setVisible(true);
+		board.setVisible(true);
 	}
 	
 	/**
@@ -404,11 +416,14 @@ public class Tetris extends JFrame {
 	 * Forces the BoardPanel and SidePanel to repaint.
 	 */
 	private void renderGame() {
-		Dimension d_board, d_side;
-		d_board = board.resize();
+		d_now = getSize();
+		board.resize((d_now.getHeight() / d_start.getHeight()) < (d_now.getWidth() / d_start.getWidth()) ? (d_now.getHeight()/ d_start.getHeight()) : (d_now.getWidth() / d_start.getWidth()));
+		int left = (d_now.width - board.getWidth()) / 2;
+		int top = ((d_now.height - 39) - board.getHeight()) / 2;
+		board.setBounds(left,top,board.getWidth(), board.getHeight());
 		board.repaint();
-		d_side = side.resize();
-		side.repaint();
+		side.setBounds(left + board.getWidth(), top, side.getWidth(), side.getHeight());
+		side.repaint();	
 	}
 	
 	/**

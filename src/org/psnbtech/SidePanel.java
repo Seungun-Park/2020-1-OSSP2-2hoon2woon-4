@@ -64,12 +64,12 @@ public class SidePanel extends JPanel {
 	/**
 	 * The y coordinate of the stats category.
 	 */
-	private static final int STATS_INSET = 175;
+	private static final int STATS_INSET = 120;
 	
 	/**
 	 * The y coordinate of the controls category.
 	 */
-	private static final int CONTROLS_INSET = 300;
+	private static final int CONTROLS_INSET = 200;
 	
 	/**
 	 * The number of pixels to offset between each string.
@@ -110,6 +110,7 @@ public class SidePanel extends JPanel {
 		this.tetris = tetris;
 		
 		d_start = new Dimension(200, BoardPanel.PANEL_HEIGHT);
+		setSize(d_start);
 		setPreferredSize(d_start);
 		setBackground(Color.BLACK);
 	}

@@ -123,6 +123,7 @@ public class BoardPanel extends JPanel {
 		this.tiles = new TileType[ROW_COUNT][COL_COUNT];
 		
 		d_start = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
+		setSize(d_start);
 		setPreferredSize(d_start);
 		setBackground(Color.BLACK);
 	}
@@ -131,17 +132,14 @@ public class BoardPanel extends JPanel {
 	 * 2020-04-22 Seungun-Park
 	 * panel resize
 	 */
-	public Dimension resize() {
-		d_now = getSize();
-		double ratio = (d_now.getHeight() / d_start.getHeight()) < (d_now.getWidth() / d_start.getWidth()) ? (d_now.getHeight()/ d_start.getHeight()) : (d_now.getWidth() / d_start.getWidth());
+	public Dimension resize(double ratio) {
 		TILE_SIZE = (int)(24.0 * ratio);
 		SHADE_WIDTH = TILE_SIZE / 6;
 		CENTER_X = COL_COUNT * TILE_SIZE / 2;
 		CENTER_Y = VISIBLE_ROW_COUNT * TILE_SIZE / 2;
 		PANEL_WIDTH = COL_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
 		PANEL_HEIGHT = VISIBLE_ROW_COUNT * TILE_SIZE + BORDER_WIDTH * 2;
-		d_now.setSize(PANEL_WIDTH, PANEL_HEIGHT);
-		setPreferredSize(d_now);
+		setSize(PANEL_WIDTH, PANEL_HEIGHT);
 		return d_now;
 	}
 	
@@ -305,7 +303,7 @@ public class BoardPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		//This helps simplify the positioning of things.
 		g.translate(BORDER_WIDTH, BORDER_WIDTH);
 		
