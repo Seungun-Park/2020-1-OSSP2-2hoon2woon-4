@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.cert.TrustAnchor;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -90,8 +91,20 @@ public class Tetris extends JFrame {
 	 * The next type of tile.
 	 */
 	private TileType nextType;
-		
-	/**
+
+	/*
+	 * writer : github.com/choi-gowoon
+	 * 2020.04.26
+	 * The type of hold tile.
+	 */
+	private TileType holdType;
+
+	/*
+	 * Whether or not we can hold
+	 */
+	private boolean isHoldable;
+
+	/*
 	 * The current column of our tile.
 	 */
 	private int currentCol;
@@ -248,13 +261,23 @@ public class Tetris extends JFrame {
 						resetGame();
 					}
 					break;
-					
+
 				/*
-				 * HOLD
+				 * writer : github.com/choi-gowoon
+				 * 2020.04.26
+				 * hold function
 				 */
 				case KeyEvent.VK_C:
-					if(true) {
-						resetGame();
+					if(!isPaused && isHoldable) {
+						TileType temp = currentType;
+						if(holdType == null){
+							currentType = getNextPieceType();
+						}
+						else{
+							currentType = holdType;
+						}
+						holdType = temp;
+						isHoldable = false;
 					}
 					break;
 				
@@ -438,6 +461,8 @@ public class Tetris extends JFrame {
 		this.isGameOver = false;	
 		this.tetrisBag.clear();
 		this.nextType = TileType.values()[nextTetromino()];
+		this.holdType = null;
+		this.isHoldable = true;
 		board.clear();
 		logicTimer.reset();
 		logicTimer.setCyclesPerSecond(gameSpeed);
@@ -479,6 +504,7 @@ public class Tetris extends JFrame {
 		this.currentRow = currentType.getSpawnRow();
 		this.currentRotation = 0;
 		this.nextType = TileType.values()[nextTetromino()];
+		this.isHoldable = true;
 		
 		/*
 		 * If the spawn point is invalid, we need to pause the game and flag that we've lost
@@ -597,6 +623,16 @@ public class Tetris extends JFrame {
 	 */
 	public TileType getNextPieceType() {
 		return nextType;
+	}
+
+	/*
+	 * writer : github.com/choi-gowoon
+	 * 2020.04.26
+	 * Gets the hold type of piece we're using.
+	 * @return The hold piece.
+	 */
+	public TileType getHoldPieceType() {
+		return holdType;
 	}
 	
 	/**
