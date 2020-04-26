@@ -1,8 +1,11 @@
 package org.psnbtech;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.cert.TrustAnchor;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -88,8 +91,20 @@ public class Tetris extends JFrame {
 	 * The next type of tile.
 	 */
 	private TileType nextType;
-		
-	/**
+
+	/*
+	 * writer : github.com/choi-gowoon
+	 * 2020.04.26
+	 * The type of hold tile.
+	 */
+	private TileType holdType;
+
+	/*
+	 * Whether or not we can hold
+	 */
+	private boolean isHoldable;
+
+	/*
 	 * The current column of our tile.
 	 */
 	private int currentCol;
@@ -120,6 +135,14 @@ public class Tetris extends JFrame {
 	 * Tetris bag
 	 */
 	private ArrayList<Integer> tetrisBag;
+	
+	/**
+	 * 2020-04-25 Seungun-Park
+	 * resize
+	 */
+	private Dimension d_start;
+	private Dimension d_now;
+	private static int pack_timer = 0;
 		
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
@@ -131,9 +154,9 @@ public class Tetris extends JFrame {
 		 * Set the basic properties of the window.
 		 */
 		super("Tetris");
-		setLayout(new BorderLayout());
+		setLayout(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
+		setResizable(true);
 		
 		/*
 		 * Initialize the BoardPanel and SidePanel instances.
@@ -145,8 +168,8 @@ public class Tetris extends JFrame {
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
 		 */
-		add(board, BorderLayout.CENTER);
-		add(side, BorderLayout.EAST);
+		add(board);
+		add(side);
 		
 		/*
 		 * Adds a custom anonymous KeyListener to the frame.
@@ -163,7 +186,7 @@ public class Tetris extends JFrame {
 				 * paused and that there is no drop cooldown, then set the
 				 * logic timer to run at a speed of 25 cycles per second.
 				 */
-				case KeyEvent.VK_S:
+				case KeyEvent.VK_DOWN:
 					if(!isPaused && dropCooldown == 0) {
 						logicTimer.setCyclesPerSecond(25.0f);
 					}
@@ -174,7 +197,7 @@ public class Tetris extends JFrame {
 				 * not paused and that the position to the left of the current
 				 * position is valid. If so, we decrement the current column by 1.
 				 */
-				case KeyEvent.VK_A:
+				case KeyEvent.VK_LEFT:
 					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)) {
 						currentCol--;
 					}
@@ -185,7 +208,7 @@ public class Tetris extends JFrame {
 				 * not paused and that the position to the right of the current
 				 * position is valid. If so, we increment the current column by 1.
 				 */
-				case KeyEvent.VK_D:
+				case KeyEvent.VK_RIGHT:
 					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)) {
 						currentCol++;
 					}
@@ -197,7 +220,7 @@ public class Tetris extends JFrame {
 				 * complexity of the rotation code, as well as it's similarity to clockwise
 				 * rotation, the code for rotating the piece is handled in another method.
 				 */
-				case KeyEvent.VK_Q:
+				case KeyEvent.VK_Z:
 					if(!isPaused) {
 						rotatePiece((currentRotation == 0) ? 3 : currentRotation - 1);
 					}
@@ -209,7 +232,7 @@ public class Tetris extends JFrame {
 				 * complexity of the rotation code, as well as it's similarity to anticlockwise
 				 * rotation, the code for rotating the piece is handled in another method.
 				 */
-				case KeyEvent.VK_E:
+				case KeyEvent.VK_X:
 					if(!isPaused) {
 						rotatePiece((currentRotation == 3) ? 0 : currentRotation + 1);
 					}
@@ -238,7 +261,34 @@ public class Tetris extends JFrame {
 						resetGame();
 					}
 					break;
+
+				/*
+				 * writer : github.com/choi-gowoon
+				 * 2020.04.26
+				 * hold function
+				 */
+				case KeyEvent.VK_C:
+					if(!isPaused && isHoldable) {
+						TileType temp = currentType;
+						if(holdType == null){
+							currentType = getNextPieceType();
+						}
+						else{
+							currentType = holdType;
+						}
+						holdType = temp;
+						isHoldable = false;
+					}
+					break;
 				
+				/*
+				 * Hard Drop
+				 */
+				case KeyEvent.VK_SPACE:
+					if(true) {
+						resetGame();
+					}
+					break;
 				}
 			}
 			
@@ -252,7 +302,7 @@ public class Tetris extends JFrame {
 				 * back to whatever the current game speed is and clear out
 				 * any cycles that might still be elapsed.
 				 */
-				case KeyEvent.VK_S:
+				case KeyEvent.VK_DOWN:
 					logicTimer.setCyclesPerSecond(gameSpeed);
 					logicTimer.reset();
 					break;
@@ -266,9 +316,13 @@ public class Tetris extends JFrame {
 		 * Here we resize the frame to hold the BoardPanel and SidePanel instances,
 		 * center the window on the screen, and show it to the user.
 		 */
-		pack();
+		getContentPane().setBackground(Color.BLACK);
+		setSize(board.getWidth() + side.getWidth()*2, board.getHeight()+39);
+		d_start = getSize();
+		setMinimumSize(d_start);
 		setLocationRelativeTo(null);
 		setVisible(true);
+		board.setVisible(true);
 	}
 	
 	/**
@@ -385,8 +439,14 @@ public class Tetris extends JFrame {
 	 * Forces the BoardPanel and SidePanel to repaint.
 	 */
 	private void renderGame() {
+		d_now = getSize();
+		board.resize((d_now.getHeight() / d_start.getHeight()) < (d_now.getWidth() / d_start.getWidth()) ? (d_now.getHeight()/ d_start.getHeight()) : (d_now.getWidth() / d_start.getWidth()));
+		int left = (d_now.width - board.getWidth()) / 2;
+		int top = ((d_now.height - 39) - board.getHeight()) / 2;
+		board.setBounds(left,top,board.getWidth(), board.getHeight());
 		board.repaint();
-		side.repaint();
+		side.setBounds(left + board.getWidth(), top, side.getWidth(), side.getHeight());
+		side.repaint();	
 	}
 	
 	/**
@@ -401,6 +461,8 @@ public class Tetris extends JFrame {
 		this.isGameOver = false;	
 		this.tetrisBag.clear();
 		this.nextType = TileType.values()[nextTetromino()];
+		this.holdType = null;
+		this.isHoldable = true;
 		board.clear();
 		logicTimer.reset();
 		logicTimer.setCyclesPerSecond(gameSpeed);
@@ -442,6 +504,7 @@ public class Tetris extends JFrame {
 		this.currentRow = currentType.getSpawnRow();
 		this.currentRotation = 0;
 		this.nextType = TileType.values()[nextTetromino()];
+		this.isHoldable = true;
 		
 		/*
 		 * If the spawn point is invalid, we need to pause the game and flag that we've lost
@@ -560,6 +623,16 @@ public class Tetris extends JFrame {
 	 */
 	public TileType getNextPieceType() {
 		return nextType;
+	}
+
+	/*
+	 * writer : github.com/choi-gowoon
+	 * 2020.04.26
+	 * Gets the hold type of piece we're using.
+	 * @return The hold piece.
+	 */
+	public TileType getHoldPieceType() {
+		return holdType;
 	}
 	
 	/**

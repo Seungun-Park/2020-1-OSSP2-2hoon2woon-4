@@ -39,7 +39,7 @@ public class SidePanel extends JPanel {
 	/**
 	 * The center x of the next piece preview box.
 	 */
-	private static final int SQUARE_CENTER_X = 130;
+	private static final int SQUARE_CENTER_X = 70;
 	
 	/**
 	 * The center y of the next piece preview box.
@@ -50,6 +50,11 @@ public class SidePanel extends JPanel {
 	 * The size of the next piece preview box.
 	 */
 	private static final int SQUARE_SIZE = (TILE_SIZE * TILE_COUNT >> 1);
+
+	/**
+	 * The number of pixels used on a small insets (generally used for categories).
+	 */
+	private static final int SMALLEST_INSET = 10;
 	
 	/**
 	 * The number of pixels used on a small insets (generally used for categories).
@@ -64,12 +69,12 @@ public class SidePanel extends JPanel {
 	/**
 	 * The y coordinate of the stats category.
 	 */
-	private static final int STATS_INSET = 175;
+	private static final int STATS_INSET = 120;
 	
 	/**
 	 * The y coordinate of the controls category.
 	 */
-	private static final int CONTROLS_INSET = 300;
+	private static final int CONTROLS_INSET = 200;
 	
 	/**
 	 * The number of pixels to offset between each string.
@@ -97,14 +102,30 @@ public class SidePanel extends JPanel {
 	private Tetris tetris;
 	
 	/**
+	 * 2020-04-22 Seungun-Park
+	 * panel resize
+	 */
+	private static Dimension d_start;
+	
+	/**
 	 * Creates a new SidePanel and sets it's display properties.
 	 * @param tetris The Tetris instance to use.
 	 */
 	public SidePanel(Tetris tetris) {
 		this.tetris = tetris;
 		
-		setPreferredSize(new Dimension(200, BoardPanel.PANEL_HEIGHT));
+		d_start = new Dimension(200, BoardPanel.PANEL_HEIGHT);
+		setSize(d_start);
+		setPreferredSize(d_start);
 		setBackground(Color.BLACK);
+	}
+	
+	/**
+	 * 2020-04-22 Seungun-Park
+	 * panel resize
+	 */
+	public Dimension resize() {
+		return d_start;
 	}
 	
 	@Override
@@ -136,91 +157,185 @@ public class SidePanel extends JPanel {
 		g.setFont(LARGE_FONT);
 		g.drawString("Controls", SMALL_INSET, offset = CONTROLS_INSET);
 		g.setFont(SMALL_FONT);
-		g.drawString("A - Move Left", LARGE_INSET, offset += TEXT_STRIDE);
-		g.drawString("D - Move Right", LARGE_INSET, offset += TEXT_STRIDE);
-		g.drawString("Q - Rotate Anticlockwise", LARGE_INSET, offset += TEXT_STRIDE);
-		g.drawString("E - Rotate Clockwise", LARGE_INSET, offset += TEXT_STRIDE);
-		g.drawString("S - Drop", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("�� - Move Left", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("�� - Move Right", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("�� - Drop", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("Z - Rotate Anticlockwise", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("X - Rotate Clockwise", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("C - Hold", LARGE_INSET, offset += TEXT_STRIDE);
+		g.drawString("Space - Hard Drop", LARGE_INSET, offset += TEXT_STRIDE);
 		g.drawString("P - Pause Game", LARGE_INSET, offset += TEXT_STRIDE);
 		
 		/*
 		 * Draw the next piece preview box.
 		 */
 		g.setFont(LARGE_FONT);
-		g.drawString("Next Piece:", SMALL_INSET, 70);
-		g.drawRect(SQUARE_CENTER_X - SQUARE_SIZE, SQUARE_CENTER_Y - SQUARE_SIZE, SQUARE_SIZE * 2, SQUARE_SIZE * 2);
+		g.drawString("NEXT", SQUARE_CENTER_X - ( SQUARE_SIZE + SMALLEST_INSET ), SQUARE_CENTER_Y - ( SQUARE_SIZE + SMALLEST_INSET ));
+		g.drawRect(SQUARE_CENTER_X - ( SQUARE_SIZE + SMALLEST_INSET ) , SQUARE_CENTER_Y - SQUARE_SIZE, SQUARE_SIZE * 2, SQUARE_SIZE * 2);
+
+		/*
+		 * Draw the hold piece box
+		 */
+		g.setFont(LARGE_FONT);
+		g.drawString("HOLD", SQUARE_CENTER_X + ( SQUARE_SIZE + SMALLEST_INSET ), SQUARE_CENTER_Y - ( SQUARE_SIZE + SMALLEST_INSET ));
+		g.drawRect(SQUARE_CENTER_X + ( SQUARE_SIZE + SMALLEST_INSET ), SQUARE_CENTER_Y - SQUARE_SIZE, SQUARE_SIZE * 2, SQUARE_SIZE * 2);
 		
 		/*
 		 * Draw a preview of the next piece that will be spawned. The code is pretty much
 		 * identical to the drawing code on the board, just smaller and centered, rather
 		 * than constrained to a grid.
 		 */
-		TileType type = tetris.getNextPieceType();
-		if(!tetris.isGameOver() && type != null) {
+
+
+		TileType nextType = tetris.getNextPieceType();
+		if(!tetris.isGameOver() && nextType != null) {
 			/*
 			 * Get the size properties of the current piece.
 			 */
-			int cols = type.getCols();
-			int rows = type.getRows();
-			int dimension = type.getDimension();
+			int cols = nextType.getCols();
+			int rows = nextType.getRows();
+			int dimension = nextType.getDimension();
 		
 			/*
 			 * Calculate the top left corner (origin) of the piece.
 			 */
-			int startX = (SQUARE_CENTER_X - (cols * TILE_SIZE / 2));
+			int startX = (SQUARE_CENTER_X - SMALLEST_INSET - (cols * TILE_SIZE / 2));
 			int startY = (SQUARE_CENTER_Y - (rows * TILE_SIZE / 2));
 		
 			/*
 			 * Get the insets for the preview. The default
 			 * rotation is used for the preview, so we just use 0.
 			 */
-			int top = type.getTopInset(0);
-			int left = type.getLeftInset(0);
+			int top = nextType.getTopInset(0);
+			int left = nextType.getLeftInset(0);
 		
 			/*
 			 * Loop through the piece and draw it's tiles onto the preview.
 			 */
 			for(int row = 0; row < dimension; row++) {
 				for(int col = 0; col < dimension; col++) {
-					if(type.isTile(col, row, 0)) {
-						drawTile(type, startX + ((col - left) * TILE_SIZE), startY + ((row - top) * TILE_SIZE), g);
+					if(nextType.isTile(col, row, 0)) {
+						drawNextTile(nextType, startX + ((col - left) * TILE_SIZE), startY + ((row - top) * TILE_SIZE), g);
+					}
+				}
+			}
+		}
+
+		/*
+		 * writer : github.com/choi-gowoon
+		 * 2020.04.26
+		 * Draw a preview of the hold piece that will be spawned. The code is pretty much
+		 * identical to the drawing code on the board, just smaller and centered, rather
+		 * than constrained to a grid.
+		 */
+
+
+		TileType holdType = tetris.getHoldPieceType();
+		if(!tetris.isGameOver() && holdType != null) {
+			/*
+			 * Get the size properties of the current piece.
+			 */
+			int cols = holdType.getCols();
+			int rows = holdType.getRows();
+			int dimension = holdType.getDimension();
+
+			/*
+			 * Calculate the top left corner (origin) of the piece.
+			 */
+			int startX = (SQUARE_CENTER_X + 5 + SQUARE_SIZE + (cols * TILE_SIZE / 2));
+			// TODO : GoWoon - 5라는 숫자로 하드하게 조정해뒀는데 바꾸기 !
+			int startY = (SQUARE_CENTER_Y - (rows * TILE_SIZE / 2));
+
+			/*
+			 * Get the insets for the preview. The default
+			 * rotation is used for the preview, so we just use 0.
+			 */
+			int top = holdType.getTopInset(0);
+			int left = holdType.getLeftInset(0);
+
+			/*
+			 * Loop through the piece and draw it's tiles onto the preview.
+			 */
+			for(int row = 0; row < dimension; row++) {
+				for(int col = 0; col < dimension; col++) {
+					if(holdType.isTile(col, row, 0)) {
+						drawHoldTile(holdType, startX + ((col - left) * TILE_SIZE), startY + ((row - top) * TILE_SIZE), g);
 					}
 				}
 			}
 		}
 	}
-	
-	/**
-	 * Draws a tile onto the preview window.
-	 * @param type The type of tile to draw.
+
+
+	/*
+	 * writer : github.com/choi-gowoon
+	 * 2020.04.26
+	 * Draws a tile onto the hold window.
+	 * @param holdType The holdType of tile to draw.
 	 * @param x The x coordinate of the tile.
 	 * @param y The y coordinate of the tile.
 	 * @param g The graphics object.
 	 */
-	private void drawTile(TileType type, int x, int y, Graphics g) {
+	private void drawHoldTile(TileType holdType, int x, int y, Graphics g) {
 		/*
 		 * Fill the entire tile with the base color.
 		 */
-		g.setColor(type.getBaseColor());
+		g.setColor(holdType.getBaseColor());
 		g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-		
+
 		/*
 		 * Fill the bottom and right edges of the tile with the dark shading color.
 		 */
-		g.setColor(type.getDarkColor());
+		g.setColor(holdType.getDarkColor());
 		g.fillRect(x, y + TILE_SIZE - SHADE_WIDTH, TILE_SIZE, SHADE_WIDTH);
 		g.fillRect(x + TILE_SIZE - SHADE_WIDTH, y, SHADE_WIDTH, TILE_SIZE);
-		
+
 		/*
 		 * Fill the top and left edges with the light shading. We draw a single line
 		 * for each row or column rather than a rectangle so that we can draw a nice
 		 * looking diagonal where the light and dark shading meet.
 		 */
-		g.setColor(type.getLightColor());
+		g.setColor(holdType.getLightColor());
+		for(int i = 0; i < SHADE_WIDTH; i++) {
+			g.drawLine(x, y + i, x + TILE_SIZE - i - 1, y + i);
+			g.drawLine(x + i, y, x + i, y + TILE_SIZE - i - 1);
+		}
+	}
+
+	/*
+	 * Draws a tile onto the preview window.
+	 * @param nextType The nextType of tile to draw.
+	 * @param x The x coordinate of the tile.
+	 * @param y The y coordinate of the tile.
+	 * @param g The graphics object.
+	 */
+	private void drawNextTile(TileType nextType, int x, int y, Graphics g) {
+		/*
+		 * Fill the entire tile with the base color.
+		 */
+		g.setColor(nextType.getBaseColor());
+		g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+
+		/*
+		 * Fill the bottom and right edges of the tile with the dark shading color.
+		 */
+		g.setColor(nextType.getDarkColor());
+		g.fillRect(x, y + TILE_SIZE - SHADE_WIDTH, TILE_SIZE, SHADE_WIDTH);
+		g.fillRect(x + TILE_SIZE - SHADE_WIDTH, y, SHADE_WIDTH, TILE_SIZE);
+
+		/*
+		 * Fill the top and left edges with the light shading. We draw a single line
+		 * for each row or column rather than a rectangle so that we can draw a nice
+		 * looking diagonal where the light and dark shading meet.
+		 */
+		g.setColor(nextType.getLightColor());
 		for(int i = 0; i < SHADE_WIDTH; i++) {
 			g.drawLine(x, y + i, x + TILE_SIZE - i - 1, y + i);
 			g.drawLine(x + i, y, x + i, y + TILE_SIZE - i - 1);
 		}
 	}
 	
+	public Dimension getDim() {
+		return d_start;
+	}
 }
