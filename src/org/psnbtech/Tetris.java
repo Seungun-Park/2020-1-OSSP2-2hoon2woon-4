@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 
 import java.util.ArrayList;
 
+import hoon2woon2.Client;
+
 /**
  * The {@code Tetris} class is responsible for handling much of the game logic and
  * reading user input.
@@ -665,6 +667,7 @@ public class Tetris extends JFrame {
 	 * @param args Unused.
 	 */
 	public static void main(String[] args) {
+		Client cli = new Client();
 		Tetris tetris = new Tetris();
 		tetris.startGame();
 	}
