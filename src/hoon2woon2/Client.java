@@ -10,6 +10,12 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
+/**
+ * 2020-04-27
+ * @author Seungun-Park
+ * TCP Socket Client
+ */
+
 public class Client {
 	static Socket socket;
 	static OutputStream os;

@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 
 import java.util.ArrayList;
 
-import hoon2woon2.Client;
 
 /**
  * The {@code Tetris} class is responsible for handling much of the game logic and
@@ -151,7 +150,7 @@ public class Tetris extends JFrame {
 	 * and adds a controller listener.
 	 */
 	
-	private Tetris() {
+	public Tetris() {
 		/*
 		 * Set the basic properties of the window.
 		 */
@@ -330,7 +329,7 @@ public class Tetris extends JFrame {
 	/**
 	 * Starts the game running. Initializes everything and enters the game loop.
 	 */
-	private void startGame() {
+	public void startGame() {
 		/*
 		 * Initialize our random number generator, logic timer, and new game variables.
 		 */
@@ -660,16 +659,4 @@ public class Tetris extends JFrame {
 	public int getPieceRotation() {
 		return currentRotation;
 	}
-
-	/**
-	 * Entry-point of the game. Responsible for creating and starting a new
-	 * game instance.
-	 * @param args Unused.
-	 */
-	public static void main(String[] args) {
-		Client cli = new Client();
-		Tetris tetris = new Tetris();
-		tetris.startGame();
-	}
-
 }
