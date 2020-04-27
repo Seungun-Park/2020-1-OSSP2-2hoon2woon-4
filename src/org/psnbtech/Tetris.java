@@ -143,7 +143,15 @@ public class Tetris extends JFrame {
 	private Dimension d_start;
 	private Dimension d_now;
 	private static int pack_timer = 0;
-		
+
+	/*
+	 * writer: cha seung hoon
+	 * hard drop
+	 * 2020.04.28
+	 * */
+	private boolean isHardDrop = false;
+	private boolean beforeVal = false;
+	
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
 	 * and adds a controller listener.
@@ -178,7 +186,14 @@ public class Tetris extends JFrame {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-								
+			
+				if(isHardDrop) {
+					beforeVal=true;
+					isHardDrop=false;
+				}
+				else
+					beforeVal=false;
+				
 				switch(e.getKeyCode()) {
 				
 				/*
@@ -197,10 +212,12 @@ public class Tetris extends JFrame {
 				 * not paused and that the position to the left of the current
 				 * position is valid. If so, we decrement the current column by 1.
 				 */
-				case KeyEvent.VK_LEFT:
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)) {
+				case KeyEvent.VK_LEFT:		
+					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
 						currentCol--;
 					}
+					
+					
 					break;
 					
 				/*
@@ -209,7 +226,7 @@ public class Tetris extends JFrame {
 				 * position is valid. If so, we increment the current column by 1.
 				 */
 				case KeyEvent.VK_RIGHT:
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)) {
+					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
 						currentCol++;
 					}
 					break;
@@ -283,12 +300,18 @@ public class Tetris extends JFrame {
 					break;
 				
 				/*
+				 * writer : cha seung hoon
+				 * 2020. 04 .28
 				 * Hard Drop
 				 */
 				case KeyEvent.VK_SPACE:
-					if(true) {
-						resetGame();
+					isHardDrop=true;
+					int cnt=0;
+					while(board.isValidAndEmpty(currentType, currentCol, currentRow+cnt, currentRotation)) {
+						cnt++;
 					}
+					currentRow+=cnt-1;
+					updateGame();
 					break;
 				}
 			}
@@ -354,8 +377,11 @@ public class Tetris extends JFrame {
 			/*
 			 * If a cycle has elapsed on the timer, we can update the game and
 			 * move our current piece down.
+			 * 
+			 * modified by cha seung hoon, for hard drop
+			 * 
 			 */
-			if(logicTimer.hasElapsedCycle()) {
+			if(logicTimer.hasElapsedCycle() && !beforeVal) {
 				updateGame();
 			}
 		
@@ -388,10 +414,13 @@ public class Tetris extends JFrame {
 		/*
 		 * Check to see if the piece's position can move down to the next row.
 		 */
+			
 		if(board.isValidAndEmpty(currentType, currentCol, currentRow + 1, currentRotation)) {
 			//Increment the current row if it's safe to do so.
 			currentRow++;
-		} else {
+		} 
+		
+		else {
 			/*
 			 * We've either reached the bottom of the board, or landed on another piece, so
 			 * we need to add the piece to the board.
@@ -433,6 +462,7 @@ public class Tetris extends JFrame {
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
+			
 		}		
 	}
 	
