@@ -272,6 +272,7 @@ public class Tetris extends JFrame {
 						TileType temp = currentType;
 						if(holdType == null){
 							currentType = getNextPieceType();
+							nextType = TileType.values()[nextTetromino()];
 						}
 						else{
 							currentType = holdType;
