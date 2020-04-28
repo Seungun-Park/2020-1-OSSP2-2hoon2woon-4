@@ -8,7 +8,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		client = new Client();
-		tetris = new Tetris();
+		tetris = new Tetris(client);
 		tetris.startGame();
 	}
 }

@@ -3,14 +3,22 @@ package org.psnbtech;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.security.cert.TrustAnchor;
 import java.util.Random;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import java.util.ArrayList;
+
+import hoon2woon2.Client;
+import hoon2woon2.LoginFrame;
 
 
 /**
@@ -19,7 +27,7 @@ import java.util.ArrayList;
  * @author Brendan Jones
  *
  */
-public class Tetris extends JFrame {
+public class Tetris extends JFrame implements ActionListener{
 	
 	/**
 	 * The Serial Version UID.
@@ -143,7 +151,21 @@ public class Tetris extends JFrame {
 	 */
 	private Dimension d_start;
 	private Dimension d_now;
-	private static int pack_timer = 0;
+	
+	/** 2020-04-28 Seungun-Park
+	 */
+	//program menu
+	JMenuBar menu = new JMenuBar();
+	JMenu mn_file = new JMenu("File");
+	JMenuItem item_new = new JMenuItem("NewGame");
+	JMenuItem item_exit = new JMenuItem("Exit");
+	JMenu mn_account = new JMenu("Account");
+	JMenuItem item_login = new JMenuItem("Login");
+	JMenuItem item_logout = new JMenuItem("Logout");
+	//socket program
+	private Client client;
+	private static int user = -1;
+	private static String userid = "";
 
 	/*
 	 * writer: cha seung hoon
@@ -158,7 +180,7 @@ public class Tetris extends JFrame {
 	 * and adds a controller listener.
 	 */
 	
-	public Tetris() {
+	public Tetris(Client c) {
 		/*
 		 * Set the basic properties of the window.
 		 */
@@ -167,12 +189,32 @@ public class Tetris extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(true);
 		
+		client = c;
+		
 		/*
 		 * Initialize the BoardPanel and SidePanel instances.
 		 */
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
 		this.tetrisBag = new ArrayList<Integer>();
+		
+		/**2020-04-28 Seungun-Park
+		 * Menu control
+		 */
+		item_new.addActionListener(this);
+		item_exit.addActionListener(this);
+		item_login.addActionListener(this);
+		item_logout.addActionListener(this);
+		
+		mn_file.add(item_new);
+		mn_file.add(item_exit);
+		mn_account.add(item_login);
+		mn_account.add(item_logout);
+		
+		menu.add(mn_file);
+		menu.add(mn_account);
+		
+		setJMenuBar(menu);
 		
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
@@ -342,7 +384,7 @@ public class Tetris extends JFrame {
 		 * center the window on the screen, and show it to the user.
 		 */
 		getContentPane().setBackground(Color.BLACK);
-		setSize(board.getWidth() + side.getWidth()*2, board.getHeight()+39);
+		setSize(board.getWidth() + side.getWidth()*2, board.getHeight()+67);
 		d_start = getSize();
 		setMinimumSize(d_start);
 		setLocationRelativeTo(null);
@@ -474,7 +516,7 @@ public class Tetris extends JFrame {
 		d_now = getSize();
 		board.resize((d_now.getHeight() / d_start.getHeight()) < (d_now.getWidth() / d_start.getWidth()) ? (d_now.getHeight()/ d_start.getHeight()) : (d_now.getWidth() / d_start.getWidth()));
 		int left = (d_now.width - board.getWidth()) / 2;
-		int top = ((d_now.height - 39) - board.getHeight()) / 2;
+		int top = ((d_now.height - 67) - board.getHeight()) / 2;
 		board.setBounds(left,top,board.getWidth(), board.getHeight());
 		board.repaint();
 		side.setBounds(left + board.getWidth(), top, side.getWidth(), side.getHeight());
@@ -689,5 +731,45 @@ public class Tetris extends JFrame {
 	 */
 	public int getPieceRotation() {
 		return currentRotation;
+	}
+	
+	/**
+	 * 2020-04-28 Seungun-Park
+	 * menu action listener
+	 */
+	public void actionPerformed(ActionEvent event) {
+		/*
+		 * if click new game menu
+		 * then start new game
+		 */
+		if(event.getSource() == item_new) {
+
+		}
+		/*
+		 * if click exit menu
+		 * then program exit
+		 */
+		if(event.getSource() == item_exit) {
+			System.exit(0);
+		}
+		/*
+		 * if click login menu
+		 * then start login with client
+		 */
+		if(event.getSource() == item_login) {
+			if(user == -1) {
+				if(!isGameOver && !isNewGame) {
+					isPaused = !isPaused;
+					logicTimer.setPaused(isPaused);
+				}
+				LoginFrame l = new LoginFrame(this, client);
+			}
+		}
+		if(event.getSource() == item_logout) {
+			if(user != -1) {
+				user = -1;
+				userid = "";
+			}
+		}
 	}
 }

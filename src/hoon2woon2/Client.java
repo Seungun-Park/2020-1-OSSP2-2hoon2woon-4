@@ -17,6 +17,9 @@ import javax.swing.JOptionPane;
  */
 
 public class Client {
+	
+	private static final long serialVersionUID = -3752491464582754341L;
+	
 	static Socket socket;
 	static OutputStream os;
 	static InputStream is;
@@ -30,18 +33,52 @@ public class Client {
 		try {
 			socket = new Socket();
 			prop.load(new FileInputStream(inipath));
-			socket.connect(new InetSocketAddress(prop.getProperty("ip"), Integer.parseInt(prop.getProperty("port"))));
 			
-			os = socket.getOutputStream();
-			sendMessage = "Tetris-Client Connected";
-			bytes = sendMessage.getBytes("UTF-8");
-			
-			os.write(bytes);;
-			os.flush();
-			
+			connect();
 		} catch(IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "서버 접속에 실패했습니다. 오프라인으로 플레이합니다.");
 		}
+	}
+	
+	public void connect() {
+		try {
+			if(!(socket.isConnected())) {
+				socket.connect(new InetSocketAddress(prop.getProperty("ip"), Integer.parseInt(prop.getProperty("port"))));
+		
+				os = socket.getOutputStream();
+				sendMessage = "Tetris-Client Connected";
+				bytes = sendMessage.getBytes("UTF-8");
+		
+				os.write(bytes);;
+				os.flush();
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void close() {
+		try {
+			socket.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean login() {
+		try {
+			connect();
+			os = socket.getOutputStream();
+			is = socket.getInputStream();
+			
+			sendMessage = "login request";
+			bytes = sendMessage.getBytes("UTF-8");
+			
+			os.write(bytes);
+			os.flush();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
