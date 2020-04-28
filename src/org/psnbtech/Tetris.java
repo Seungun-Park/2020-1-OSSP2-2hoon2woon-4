@@ -3,16 +3,23 @@ package org.psnbtech;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.security.cert.TrustAnchor;
 import java.util.Random;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import java.util.ArrayList;
 
 import hoon2woon2.Client;
+import hoon2woon2.LoginFrame;
+
 
 /**
  * The {@code Tetris} class is responsible for handling much of the game logic and
@@ -20,7 +27,7 @@ import hoon2woon2.Client;
  * @author Brendan Jones
  *
  */
-public class Tetris extends JFrame {
+public class Tetris extends JFrame implements ActionListener{
 	
 	/**
 	 * The Serial Version UID.
@@ -144,14 +151,36 @@ public class Tetris extends JFrame {
 	 */
 	private Dimension d_start;
 	private Dimension d_now;
-	private static int pack_timer = 0;
-		
+	
+	/** 2020-04-28 Seungun-Park
+	 */
+	//program menu
+	JMenuBar menu = new JMenuBar();
+	JMenu mn_file = new JMenu("File");
+	JMenuItem item_new = new JMenuItem("NewGame");
+	JMenuItem item_exit = new JMenuItem("Exit");
+	JMenu mn_account = new JMenu("Account");
+	JMenuItem item_login = new JMenuItem("Login");
+	JMenuItem item_logout = new JMenuItem("Logout");
+	//socket program
+	private Client client;
+	private static int user = -1;
+	private static String userid = "";
+
+	/*
+	 * writer: cha seung hoon
+	 * hard drop
+	 * 2020.04.28
+	 * */
+	private boolean isHardDrop = false;
+	private boolean beforeVal = false;
+	
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
 	 * and adds a controller listener.
 	 */
 	
-	private Tetris() {
+	public Tetris(Client c) {
 		/*
 		 * Set the basic properties of the window.
 		 */
@@ -160,12 +189,32 @@ public class Tetris extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(true);
 		
+		client = c;
+		
 		/*
 		 * Initialize the BoardPanel and SidePanel instances.
 		 */
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
 		this.tetrisBag = new ArrayList<Integer>();
+		
+		/**2020-04-28 Seungun-Park
+		 * Menu control
+		 */
+		item_new.addActionListener(this);
+		item_exit.addActionListener(this);
+		item_login.addActionListener(this);
+		item_logout.addActionListener(this);
+		
+		mn_file.add(item_new);
+		mn_file.add(item_exit);
+		mn_account.add(item_login);
+		mn_account.add(item_logout);
+		
+		menu.add(mn_file);
+		menu.add(mn_account);
+		
+		setJMenuBar(menu);
 		
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
@@ -180,7 +229,14 @@ public class Tetris extends JFrame {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-								
+			
+				if(isHardDrop) {
+					beforeVal=true;
+					isHardDrop=false;
+				}
+				else
+					beforeVal=false;
+				
 				switch(e.getKeyCode()) {
 				
 				/*
@@ -199,10 +255,12 @@ public class Tetris extends JFrame {
 				 * not paused and that the position to the left of the current
 				 * position is valid. If so, we decrement the current column by 1.
 				 */
-				case KeyEvent.VK_LEFT:
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)) {
+				case KeyEvent.VK_LEFT:		
+					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
 						currentCol--;
 					}
+					
+					
 					break;
 					
 				/*
@@ -211,7 +269,7 @@ public class Tetris extends JFrame {
 				 * position is valid. If so, we increment the current column by 1.
 				 */
 				case KeyEvent.VK_RIGHT:
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)) {
+					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
 						currentCol++;
 					}
 					break;
@@ -274,6 +332,7 @@ public class Tetris extends JFrame {
 						TileType temp = currentType;
 						if(holdType == null){
 							currentType = getNextPieceType();
+							nextType = TileType.values()[nextTetromino()];
 						}
 						else{
 							currentType = holdType;
@@ -284,12 +343,18 @@ public class Tetris extends JFrame {
 					break;
 				
 				/*
+				 * writer : cha seung hoon
+				 * 2020. 04 .28
 				 * Hard Drop
 				 */
 				case KeyEvent.VK_SPACE:
-					if(true) {
-						resetGame();
+					isHardDrop=true;
+					int cnt=0;
+					while(board.isValidAndEmpty(currentType, currentCol, currentRow+cnt, currentRotation)) {
+						cnt++;
 					}
+					currentRow+=cnt-1;
+					updateGame();
 					break;
 				}
 			}
@@ -319,7 +384,7 @@ public class Tetris extends JFrame {
 		 * center the window on the screen, and show it to the user.
 		 */
 		getContentPane().setBackground(Color.BLACK);
-		setSize(board.getWidth() + side.getWidth()*2, board.getHeight()+39);
+		setSize(board.getWidth() + side.getWidth()*2, board.getHeight()+67);
 		d_start = getSize();
 		setMinimumSize(d_start);
 		setLocationRelativeTo(null);
@@ -330,7 +395,7 @@ public class Tetris extends JFrame {
 	/**
 	 * Starts the game running. Initializes everything and enters the game loop.
 	 */
-	private void startGame() {
+	public void startGame() {
 		/*
 		 * Initialize our random number generator, logic timer, and new game variables.
 		 */
@@ -355,8 +420,11 @@ public class Tetris extends JFrame {
 			/*
 			 * If a cycle has elapsed on the timer, we can update the game and
 			 * move our current piece down.
+			 * 
+			 * modified by cha seung hoon, for hard drop
+			 * 
 			 */
-			if(logicTimer.hasElapsedCycle()) {
+			if(logicTimer.hasElapsedCycle() && !beforeVal) {
 				updateGame();
 			}
 		
@@ -389,10 +457,13 @@ public class Tetris extends JFrame {
 		/*
 		 * Check to see if the piece's position can move down to the next row.
 		 */
+			
 		if(board.isValidAndEmpty(currentType, currentCol, currentRow + 1, currentRotation)) {
 			//Increment the current row if it's safe to do so.
 			currentRow++;
-		} else {
+		} 
+		
+		else {
 			/*
 			 * We've either reached the bottom of the board, or landed on another piece, so
 			 * we need to add the piece to the board.
@@ -434,6 +505,7 @@ public class Tetris extends JFrame {
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
+			
 		}		
 	}
 	
@@ -444,7 +516,7 @@ public class Tetris extends JFrame {
 		d_now = getSize();
 		board.resize((d_now.getHeight() / d_start.getHeight()) < (d_now.getWidth() / d_start.getWidth()) ? (d_now.getHeight()/ d_start.getHeight()) : (d_now.getWidth() / d_start.getWidth()));
 		int left = (d_now.width - board.getWidth()) / 2;
-		int top = ((d_now.height - 39) - board.getHeight()) / 2;
+		int top = ((d_now.height - 67) - board.getHeight()) / 2;
 		board.setBounds(left,top,board.getWidth(), board.getHeight());
 		board.repaint();
 		side.setBounds(left + board.getWidth(), top, side.getWidth(), side.getHeight());
@@ -660,16 +732,44 @@ public class Tetris extends JFrame {
 	public int getPieceRotation() {
 		return currentRotation;
 	}
-
+	
 	/**
-	 * Entry-point of the game. Responsible for creating and starting a new
-	 * game instance.
-	 * @param args Unused.
+	 * 2020-04-28 Seungun-Park
+	 * menu action listener
 	 */
-	public static void main(String[] args) {
-		Client cli = new Client();
-		Tetris tetris = new Tetris();
-		tetris.startGame();
-	}
+	public void actionPerformed(ActionEvent event) {
+		/*
+		 * if click new game menu
+		 * then start new game
+		 */
+		if(event.getSource() == item_new) {
 
+		}
+		/*
+		 * if click exit menu
+		 * then program exit
+		 */
+		if(event.getSource() == item_exit) {
+			System.exit(0);
+		}
+		/*
+		 * if click login menu
+		 * then start login with client
+		 */
+		if(event.getSource() == item_login) {
+			if(user == -1) {
+				if(!isGameOver && !isNewGame) {
+					isPaused = !isPaused;
+					logicTimer.setPaused(isPaused);
+				}
+				LoginFrame l = new LoginFrame(this, client);
+			}
+		}
+		if(event.getSource() == item_logout) {
+			if(user != -1) {
+				user = -1;
+				userid = "";
+			}
+		}
+	}
 }
