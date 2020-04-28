@@ -38,8 +38,8 @@ public class LoginFrame extends JFrame implements ActionListener{
 		
 		pn_content.setLayout(null);
 		
-		btn_login.addActionListener(t);
-		btn_register.addActionListener(t);
+		btn_login.addActionListener(this);
+		btn_register.addActionListener(this);
 		
 		la_id.setBounds(13, 10, 60, 25);
 		tf_id.setBounds(45, 10, 210, 25);
@@ -63,6 +63,8 @@ public class LoginFrame extends JFrame implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent event) {
-		
+		if(event.getSource() == btn_login) {
+			client.login(tf_id.getText(), pf_pw.getPassword());
+		}
 	}
 }

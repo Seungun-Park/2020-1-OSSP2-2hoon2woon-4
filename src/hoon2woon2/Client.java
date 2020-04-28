@@ -23,8 +23,7 @@ public class Client {
 	static Socket socket;
 	static OutputStream os;
 	static InputStream is;
-	static String sendMessage;
-	static byte[] bytes;
+	static byte[] buf;
 	static final String inipath = "server.properties";
 	
 	Properties prop = new Properties();
@@ -40,21 +39,20 @@ public class Client {
 		}
 	}
 	
-	public void connect() {
+	public boolean connect() {
 		try {
 			if(!(socket.isConnected())) {
 				socket.connect(new InetSocketAddress(prop.getProperty("ip"), Integer.parseInt(prop.getProperty("port"))));
-		
 				os = socket.getOutputStream();
-				sendMessage = "Tetris-Client Connected";
-				bytes = sendMessage.getBytes("UTF-8");
+				is = socket.getInputStream();
 		
-				os.write(bytes);;
-				os.flush();
+				send("Tetris-Client Connected");
+				return true;
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 	
 	public void close() {
@@ -65,17 +63,30 @@ public class Client {
 		}
 	}
 	
-	public boolean login() {
+	public boolean login(String id, char[] pw) {
 		try {
-			connect();
-			os = socket.getOutputStream();
-			is = socket.getInputStream();
-			
-			sendMessage = "login request";
-			bytes = sendMessage.getBytes("UTF-8");
-			
-			os.write(bytes);
+			if(!socket.isConnected()) return false;
+			send("login");
+			send(id);
+			buf = new byte[256];
+			is.read(buf);
+			send(new String(pw));
+			buf = new byte[256];
+			is.read(buf);
+			System.out.println(new String(buf));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean send(String message) {
+		try {
+			if(!socket.isConnected()) return false;
+			buf = message.getBytes("UTF-8");
+			os.write(buf);
 			os.flush();
+			return true;
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
