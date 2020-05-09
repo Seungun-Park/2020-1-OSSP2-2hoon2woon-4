@@ -2,3 +2,7 @@
 *.properties
 .idea/
 *.iml
+*.class
+/Client.class
+/LoginFrame.class
+/Main.class
