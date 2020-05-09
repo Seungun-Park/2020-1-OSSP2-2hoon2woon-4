@@ -51,6 +51,7 @@ public class Clock {
 		this.millisPerCycle = (1.0f / cyclesPerSecond) * 1000;
 	}
 	
+	
 	/**
 	 * Resets the clock stats. Elapsed cycles and cycle excess will be reset
 	 * to 0, the last update time will be reset to the current time, and the
