@@ -1,4 +1,5 @@
 package org.psnbtech;
+import java.util.Random;
 
 /*
  * TODO ! Tetris :
@@ -9,6 +10,7 @@ package org.psnbtech;
 
 
 // TODO ! Item 보여줄 때 이미지..? 같은 걸로 바꾸기..!
+// TODO ! 점수 제도 ..?
 public class Items {
 
     public class Type {
@@ -56,14 +58,122 @@ public class Items {
     Type Goods[] = {DeleteAllBlocks, SpeedDown, DeleteOneLine, DeleteTwoLine, DoubleScore, MoreHold, MoreNext};
     Type Bads[] = {DisableRotate, SpeedUp, ReverseKey, HideNext, HideField, AddOneLine, AddTwoLine};
 
-    // TODO ! Function : generateRandomItems - same chance in good and bad and all the items
+    private static int ITEM_COUNT = 0;
+    private static int CUR_ITEM;
 
-    // TODO ! Function : actionItem - operate..? run..? the item > case to each item
+    private Random random;
+    // Function : generateRandomItems - same chance in good and bad and all the items
+    public void generateRandomItem(){
+        random = new Random();
+        CUR_ITEM = random.nextInt(13) + 1;
+    }
+
     // TODO ! each Function : eachActionItem
+    public void ActionDeleteAllBlocks(){
+
+    }
+    public void ActionSpeedDown(){
+
+    }
+    public void ActionDeleteOneLine(){
+
+    }
+    public void ActionDeleteTwoLine(){
+
+    }
+    public void ActionDoubleScore(){
+
+    }
+    public void ActionMoreHold(){
+
+    }
+    public void ActionMoreNext(){
+
+    }
+
+    public void ActionDisableRotate(){
+
+    }
+    public void ActionSpeedUp(){
+
+    }
+    public void ActionReverseKey(){
+
+    }
+    public void ActionHideNext(){
+
+    }
+    public void ActionHideField(){
+
+    }
+    public void ActionAddOneLine(){
+
+    }
+    public void ActionAddTwoLine(){
+
+    }
+
+
+    // Function : actionItem - operate..? run..? the item > case to each item
+    public void actionItem(int itemIndex){
+       switch (itemIndex){
+           case 1:
+               ActionDeleteAllBlocks();
+               break;
+           case 2:
+               ActionSpeedDown();
+               break;
+           case 3:
+               ActionDeleteOneLine();
+               break;
+           case 4:
+               ActionDeleteTwoLine();
+               break;
+           case 5:
+               ActionDoubleScore();
+               break;
+           case 6:
+               ActionMoreHold();
+               break;
+           case 7:
+               ActionMoreNext();
+               break;
+           case 8:
+               ActionDisableRotate();
+               break;
+           case 9:
+               ActionSpeedUp();
+               break;
+           case 10:
+               ActionReverseKey();
+               break;
+           case 11:
+               ActionHideNext();
+               break;
+           case 12:
+               ActionHideField();
+               break;
+           case 13:
+               ActionAddOneLine();
+               break;
+           case 14:
+               ActionAddTwoLine();
+               break;
+       }
+    }
 
     // TODO ! Function : itemLocation - decide the location of items ( param : tile info..? board info..?)
 
-    // TODO ! Function : itemUpdate - return item randomly
+    // Function : itemUpdate - return item randomly
+    Type itemUpdate(){
+        ITEM_COUNT++;
+        if(CUR_ITEM > COUNT_OF_GOODS){
+            return Bads[CUR_ITEM-1];
+        }
+        else{
+            return Goods[CUR_ITEM%(COUNT_OF_GOODS+1)];
+        }
+    }
 
 }
 
