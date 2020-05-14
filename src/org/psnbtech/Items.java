@@ -34,29 +34,21 @@ public class Items {
         }
     }
 
-    private static final int COUNT_OF_GOODS = 7;
-    private static final int COUNT_OF_BADS = 7;
+    private static final int COUNT_OF_GOODS = 3;
+    private static final int COUNT_OF_BADS = 3;
 
     // Definition : Good Items
     Type DeleteAllBlocks = new Type(1, "Delete All Blocks !!!");
-    Type SpeedDown = new Type(2, "Just 30 Seconds, Speed Down !!!");
-    Type DeleteOneLine = new Type(3, "Delete One Line !!!");
-    Type DeleteTwoLine = new Type(4, "Delete Two Line !!!");
+    Type DeleteSomeLine = new Type(3, "Delete One Line !!!");
     Type DoubleScore = new Type(5, "Just 30 Seconds, Double Score !!!");
-    Type MoreHold = new Type(6, "Just One Time, One More Hold !!!");
-    Type MoreNext = new Type(7, "Just One Time, One More Next !!!");
 
     // Definition : Bad Items
     Type DisableRotate = new Type(8, "Just 30 Seconds, Disable Rotate ...");
-    Type SpeedUp = new Type(9, "Just 30 Seconds, Speed Up ...");
     Type ReverseKey = new Type(10, "Just 30 Seconds, Reverse Left and Right Key ...");
-    Type HideNext = new Type(11, "Just 30 Seconds, Hide Next Block ...");
-    Type HideField = new Type(12, "Just 30 Seconds, Can't See Board ...");
     Type AddOneLine = new Type(13, "Add One Line ...");
-    Type AddTwoLine = new Type(14, "Add Two Lines ...");
 
-    Type Goods[] = {DeleteAllBlocks, SpeedDown, DeleteOneLine, DeleteTwoLine, DoubleScore, MoreHold, MoreNext};
-    Type Bads[] = {DisableRotate, SpeedUp, ReverseKey, HideNext, HideField, AddOneLine, AddTwoLine};
+    Type Goods[] = {DeleteAllBlocks, DeleteSomeLine, DoubleScore};
+    Type Bads[] = {DisableRotate, ReverseKey, AddOneLine};
 
     private static int ITEM_COUNT = 0;
     private static int CUR_ITEM;
@@ -65,51 +57,27 @@ public class Items {
     // Function : generateRandomItems - same chance in good and bad and all the items
     public void generateRandomItem(){
         random = new Random();
-        CUR_ITEM = random.nextInt(13) + 1;
+        CUR_ITEM = random.nextInt(COUNT_OF_GOODS + COUNT_OF_BADS - 1) + 1;
     }
 
     // TODO ! each Function : eachActionItem
     public void ActionDeleteAllBlocks(){
 
     }
-    public void ActionSpeedDown(){
-
-    }
-    public void ActionDeleteOneLine(){
-
-    }
-    public void ActionDeleteTwoLine(){
+    public void ActionDeleteSomeLine(){
 
     }
     public void ActionDoubleScore(){
-
-    }
-    public void ActionMoreHold(){
-
-    }
-    public void ActionMoreNext(){
 
     }
 
     public void ActionDisableRotate(){
 
     }
-    public void ActionSpeedUp(){
-
-    }
     public void ActionReverseKey(){
 
     }
-    public void ActionHideNext(){
-
-    }
-    public void ActionHideField(){
-
-    }
     public void ActionAddOneLine(){
-
-    }
-    public void ActionAddTwoLine(){
 
     }
 
@@ -121,43 +89,19 @@ public class Items {
                ActionDeleteAllBlocks();
                break;
            case 2:
-               ActionSpeedDown();
+               ActionDeleteSomeLine();
                break;
            case 3:
-               ActionDeleteOneLine();
-               break;
-           case 4:
-               ActionDeleteTwoLine();
-               break;
-           case 5:
                ActionDoubleScore();
                break;
-           case 6:
-               ActionMoreHold();
-               break;
-           case 7:
-               ActionMoreNext();
-               break;
-           case 8:
+           case 4:
                ActionDisableRotate();
                break;
-           case 9:
-               ActionSpeedUp();
-               break;
-           case 10:
+           case 5:
                ActionReverseKey();
                break;
-           case 11:
-               ActionHideNext();
-               break;
-           case 12:
-               ActionHideField();
-               break;
-           case 13:
+           case 6:
                ActionAddOneLine();
-               break;
-           case 14:
-               ActionAddTwoLine();
                break;
        }
     }
