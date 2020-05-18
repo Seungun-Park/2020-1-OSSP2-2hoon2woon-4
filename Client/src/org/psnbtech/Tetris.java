@@ -484,7 +484,12 @@ public class Tetris extends JFrame implements ActionListener{
 			 * Increase the speed slightly for the next piece and update the game's timer
 			 * to reflect the increase.
 			 */
-			gameSpeed += 0.035f;
+			if (level < 5) {
+				gameSpeed += 0.1f;
+			}
+			else {
+				gameSpeed += 0.035f;
+			}
 			logicTimer.setCyclesPerSecond(gameSpeed);
 			logicTimer.reset();
 			
