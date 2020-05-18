@@ -342,7 +342,10 @@ public class BoardPanel extends JPanel {
 					}
 				}
 			}
-			
+
+			Items items[] = tetris.getIte
+			drawItem(3*TILE_SIZE,10*TILE_SIZE,1,g);
+
 			/*
 			 * Draw the current piece. This cannot be drawn like the rest of the
 			 * pieces because it's still not part of the game board. If it were
@@ -353,7 +356,7 @@ public class BoardPanel extends JPanel {
 			int pieceCol = tetris.getPieceCol();
 			int pieceRow = tetris.getPieceRow();
 			int rotation = tetris.getPieceRotation();
-			
+
 			//Draw the piece onto the board.
 			for(int col = 0; col < type.getDimension(); col++) {
 				for(int row = 0; row < type.getDimension(); row++) {
@@ -456,6 +459,11 @@ public class BoardPanel extends JPanel {
 			g.drawLine(x, y + i, x + TILE_SIZE - i - 1, y + i);
 			g.drawLine(x + i, y, x + i, y + TILE_SIZE - i - 1);
 		}
+	}
+
+	public void drawItem(int x, int y, int num, Graphics g){
+		g.setColor(Color.white);
+		g.drawString(Integer.toString(num),x, y );
 	}
 
 		public Dimension getDim() {

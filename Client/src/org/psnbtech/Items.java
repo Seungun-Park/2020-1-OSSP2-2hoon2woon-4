@@ -1,13 +1,6 @@
 package org.psnbtech;
 import java.util.Random;
 
-/*
- * TODO ! Tetris :
- * 아이템 객체 선언하고
- * 특정 시간마다 랜덤 아이템 받기
- * 아이템 보드에 보여주기
- */
-
 
 // TODO ! Item 보여줄 때 이미지..? 같은 걸로 바꾸기..!
 public class Items {
@@ -69,7 +62,6 @@ public class Items {
         CUR_ITEM = random.nextInt(COUNT_OF_GOODS + COUNT_OF_BADS - 1) + 1;
     }
 
-    // TODO ! each Function : eachActionItem
     public void ActionDeleteAllBlocks(BoardPanel board){
         board.clear();
     }
