@@ -1,4 +1,9 @@
-/bin
+Client/bin
 *.properties
 .idea/
 *.iml
+/Server/Debug
+/Server/x64
+/Server/.vs
+/Server/Server/Debug
+/Server/Server/x64
