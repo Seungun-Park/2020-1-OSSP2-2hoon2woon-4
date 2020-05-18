@@ -48,6 +48,13 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The BoardPanel instance.
 	 */
 	private BoardPanel board;
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * 2020.05.16
+	 * The Item instance
+	 */
+	private Items items;
 	
 	/**
 	 * The SidePanel instance.
@@ -79,6 +86,12 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The current score.
 	 */
 	private int score;
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * 2020.05.16
+	 */
+	private boolean scoreIndex;
 	
 	/**
 	 * The random number generator. This is used to
@@ -197,6 +210,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
 		this.tetrisBag = new ArrayList<Integer>();
+		this.items = new Items(board);
 		
 		/**2020-04-28 Seungun-Park
 		 * Menu control
@@ -402,6 +416,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.random = new Random();
 		this.isNewGame = true;
 		this.gameSpeed = 1.0f;
+		scoreIndex = true;
 		
 		/*
 		 * Setup the timer to keep the game from running before the user presses enter
@@ -477,7 +492,12 @@ public class Tetris extends JFrame implements ActionListener{
 			 */
 			int cleared = board.checkLines();
 			if(cleared > 0) {
-				score += 50 << cleared;
+				if(scoreIndex){
+					score += 50 << cleared;
+				}
+				else{
+					score += (50 << cleared)*2;
+				}
 			}
 			
 			/*
