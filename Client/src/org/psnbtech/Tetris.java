@@ -595,7 +595,7 @@ public class Tetris extends JFrame implements ActionListener{
 		 * because it means that the pieces on the board have gotten too high.
 		 */
 		if(!board.isValidAndEmpty(currentType, currentCol, currentRow, currentRotation)) {
-			//rank.uploadScore();
+			rank.uploadScore();
 			this.isGameOver = true;
 			logicTimer.setPaused(true);
 		}		
