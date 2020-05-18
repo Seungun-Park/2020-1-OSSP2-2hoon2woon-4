@@ -1,3 +1,4 @@
+Client/bin
 /bin
 *.properties
 .idea/
@@ -6,3 +7,9 @@
 /Client.class
 /LoginFrame.class
 /Main.class
+/Server/Debug
+/Server/x64
+/Server/.vs
+/Server/Server/Debug
+/Server/Server/x64
+/Client/.settings
