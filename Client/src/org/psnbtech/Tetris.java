@@ -583,7 +583,6 @@ public class Tetris extends JFrame implements ActionListener{
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
-			spawnPiece();
 
 			/*
 			 * writer: choi gowoon
