@@ -8,7 +8,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 2020-04-27
@@ -70,11 +71,19 @@ public class Client {
 			send(id);
 			buf = new byte[256];
 			is.read(buf);
-			send(new String(pw));
+			
+			MessageDigest sh = MessageDigest.getInstance("SHA-256");
+			sh.reset();
+			sh.update((new String(pw)).getBytes("UTF-8"));
+			os.write(sh.digest());
+			os.flush();
+			
 			buf = new byte[256];
 			is.read(buf);
 			System.out.println(new String(buf));
 		} catch(IOException e) {
+			e.printStackTrace();
+		} catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		return false;
