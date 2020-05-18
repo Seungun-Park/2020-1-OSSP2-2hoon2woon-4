@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import hoon2woon2.Client;
 import hoon2woon2.LoginFrame;
+import hoon2woon2.RankPanel;
 
 
 /**
@@ -62,6 +63,11 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The SidePanel instance.
 	 */
 	private SidePanel side;
+	
+	/**
+	 * The RankPanel instance.
+	 */
+	private RankPanel rank;
 	
 	/**
 	 * Whether or not the game is paused.
@@ -211,6 +217,7 @@ public class Tetris extends JFrame implements ActionListener{
 		 */
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
+		this.rank = new RankPanel(this);
 		this.tetrisBag = new ArrayList<Integer>();
 		
 		/**2020-04-28 Seungun-Park
@@ -234,6 +241,7 @@ public class Tetris extends JFrame implements ActionListener{
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
 		 */
+		add(rank);
 		add(board);
 		add(side);
 		
@@ -463,6 +471,7 @@ public class Tetris extends JFrame implements ActionListener{
 			 */
 			if(logicTimer.hasElapsedCycle() && !beforeVal) {
 				updateGame();
+				rank.update();
 			}
 		
 			//Decrement the drop cool down if necessary.
@@ -569,6 +578,7 @@ public class Tetris extends JFrame implements ActionListener{
 		board.repaint();
 		side.setBounds(left + board.getWidth(), top, side.getWidth(), side.getHeight());
 		side.repaint();	
+		rank.repaint();
 	}
 	
 	/**
@@ -633,6 +643,7 @@ public class Tetris extends JFrame implements ActionListener{
 		 * because it means that the pieces on the board have gotten too high.
 		 */
 		if(!board.isValidAndEmpty(currentType, currentCol, currentRow, currentRotation)) {
+			rank.uploadScore();
 			this.isGameOver = true;
 			logicTimer.setPaused(true);
 		}		

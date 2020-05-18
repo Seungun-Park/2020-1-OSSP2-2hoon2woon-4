@@ -124,7 +124,7 @@ public class BoardPanel extends JPanel {
 		
 		d_start = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
 		setSize(d_start);
-		setPreferredSize(d_start);
+		//setPreferredSize(d_start);
 		setBackground(Color.BLACK);
 	}
 	
