@@ -51,6 +51,10 @@ public class Tetris extends JFrame implements ActionListener{
 	 */
 	private BoardPanel board;
 
+	/**
+	 * writer : choi-gowoon
+	 * The ItemManager instance
+	 */
 	private ItemManager itemManager;
 	
 	/**
@@ -92,6 +96,7 @@ public class Tetris extends JFrame implements ActionListener{
 	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.05.16
+	 * boolean flag for items
 	 */
 	private boolean scoreIndex;
 
@@ -120,7 +125,7 @@ public class Tetris extends JFrame implements ActionListener{
 	 */
 	private TileType nextType;
 
-	/*
+	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.04.26
 	 * The type of hold tile.
@@ -276,6 +281,11 @@ public class Tetris extends JFrame implements ActionListener{
 				 * not paused and that the position to the left of the current
 				 * position is valid. If so, we decrement the current column by 1.
 				 */
+				/**
+				 * writer: choi gowoon
+				 * Move Left and Move Right
+				 * add flag for key reversing item
+				 */
 				case KeyEvent.VK_LEFT:
 					if(reverseIndex){
 						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
@@ -312,6 +322,11 @@ public class Tetris extends JFrame implements ActionListener{
 				 * and then attempt to rotate the piece anticlockwise. Because of the size and
 				 * complexity of the rotation code, as well as it's similarity to clockwise
 				 * rotation, the code for rotating the piece is handled in another method.
+				 */
+				/**
+				 * writer: choi gowoon
+				 * Rotate Anticlockwise and clockwise
+				 * add flag for key nonRotation item
 				 */
 				case KeyEvent.VK_Z:
 					if(rotationIndex){
@@ -420,7 +435,7 @@ public class Tetris extends JFrame implements ActionListener{
 
 	/**
 	 * writer : github.com/choi-gowoon
-	 * 2020.05.18
+	 * hold function
 	 */
 	public void holdTile(){
 		if(!isPaused && isHoldable) {
@@ -570,6 +585,10 @@ public class Tetris extends JFrame implements ActionListener{
 			spawnPiece();
 			spawnPiece();
 
+			/*
+			 * writer: choi gowoon
+			 * item action
+			 */
 			itemManager.generateItem();
 			itemManager.manageBadItem();
 
@@ -803,16 +822,33 @@ public class Tetris extends JFrame implements ActionListener{
 		return currentRotation;
 	}
 
+	/**
+	 * writer : choi gowoon
+	 * Gets the itemManager
+	 * @return The itemManager.
+	 */
 	public ItemManager getItemManager() { return itemManager; }
 
+	/**
+	 * writer : choi gowoon
+	 * Sets the scoreIndex
+	 */
 	public void setScoreIndex(boolean scoreIndex) {
 		this.scoreIndex = scoreIndex;
 	}
 
+	/**
+	 * writer : choi gowoon
+	 * Sets the rotationIndex
+	 */
 	public void setRotationIndex(boolean rotationIndex) {
 		this.rotationIndex = rotationIndex;
 	}
 
+	/**
+	 * writer : choi gowoon
+	 * Sets the reverseIndex
+	 */
 	public void setReverseIndex(boolean reverseIndex) {
 		this.reverseIndex = reverseIndex;
 	}
