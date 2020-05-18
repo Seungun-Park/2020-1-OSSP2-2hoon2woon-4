@@ -116,7 +116,7 @@ public class SidePanel extends JPanel {
 		
 		d_start = new Dimension(200, BoardPanel.PANEL_HEIGHT);
 		setSize(d_start);
-		setPreferredSize(d_start);
+		//setPreferredSize(d_start);
 		setBackground(Color.BLACK);
 	}
 	
