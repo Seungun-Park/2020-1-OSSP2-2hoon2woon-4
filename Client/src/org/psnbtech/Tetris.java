@@ -49,6 +49,13 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The BoardPanel instance.
 	 */
 	private BoardPanel board;
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * 2020.05.16
+	 * The Item instance
+	 */
+	private Items items;
 	
 	/**
 	 * The SidePanel instance.
@@ -85,6 +92,12 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The current score.
 	 */
 	private int score;
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * 2020.05.16
+	 */
+	private boolean scoreIndex;
 	
 	/**
 	 * The random number generator. This is used to
@@ -204,6 +217,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.side = new SidePanel(this);
 		this.rank = new RankPanel(this);
 		this.tetrisBag = new ArrayList<Integer>();
+		this.items = new Items(board);
 		
 		/**2020-04-28 Seungun-Park
 		 * Menu control
@@ -336,18 +350,7 @@ public class Tetris extends JFrame implements ActionListener{
 				 * hold function
 				 */
 				case KeyEvent.VK_C:
-					if(!isPaused && isHoldable) {
-						TileType temp = currentType;
-						if(holdType == null){
-							currentType = getNextPieceType();
-							nextType = TileType.values()[nextTetromino()];
-						}
-						else{
-							currentType = holdType;
-						}
-						holdType = temp;
-						isHoldable = false;
-					}
+					holdTile();
 					break;
 				
 				/*
@@ -399,6 +402,24 @@ public class Tetris extends JFrame implements ActionListener{
 		setVisible(true);
 		board.setVisible(true);
 	}
+
+	public void holdTile(){
+		if(!isPaused && isHoldable) {
+			TileType temp = currentType;
+			if(holdType == null){
+				currentType = getNextPieceType();
+				nextType = TileType.values()[nextTetromino()];
+			}
+			else{
+				currentType = holdType;
+			}
+			currentCol = currentType.getSpawnColumn();
+			currentRow = currentType.getSpawnRow();
+			currentRotation = 0;
+			holdType = temp;
+			isHoldable = false;
+		}
+	}
 	
 	/**
 	 * Starts the game running. Initializes everything and enters the game loop.
@@ -410,6 +431,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.random = new Random();
 		this.isNewGame = true;
 		this.gameSpeed = 1.0f;
+		scoreIndex = true;
 		
 		/*
 		 * Setup the timer to keep the game from running before the user presses enter
@@ -486,14 +508,24 @@ public class Tetris extends JFrame implements ActionListener{
 			 */
 			int cleared = board.checkLines();
 			if(cleared > 0) {
-				score += 50 << cleared;
+				if(scoreIndex){
+					score += 50 << cleared;
+				}
+				else{
+					score += (50 << cleared)*2;
+				}
 			}
 			
 			/*
 			 * Increase the speed slightly for the next piece and update the game's timer
 			 * to reflect the increase.
 			 */
-			gameSpeed += 0.035f;
+			if (level < 5) {
+				gameSpeed += 0.1f;
+			}
+			else {
+				gameSpeed += 0.035f;
+			}
 			logicTimer.setCyclesPerSecond(gameSpeed);
 			logicTimer.reset();
 			
