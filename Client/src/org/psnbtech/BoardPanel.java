@@ -1,9 +1,12 @@
 package org.psnbtech;
 
+import org.psnbtech.Items.ItemManager;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -101,6 +104,8 @@ public class BoardPanel extends JPanel {
 	 * The Tetris instance.
 	 */
 	private Tetris tetris;
+
+	private ItemManager itemManager;
 
 	/**
 	 * The tiles that make up the board.
@@ -266,6 +271,7 @@ public class BoardPanel extends JPanel {
 				setTile(col, row + 1, getTile(col, row));
 			}
 		}
+		itemManager.deleteItem(line);
 		return true;
 	}
 	
@@ -343,8 +349,11 @@ public class BoardPanel extends JPanel {
 				}
 			}
 
-			Items items[] = tetris.getIte
-			drawItem(3*TILE_SIZE,10*TILE_SIZE,1,g);
+			itemManager = tetris.getItemManager();
+			for(int i=0; i<itemManager.getItems().size(); i++){
+				drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE,itemManager.getItems().get(i).getX()*TILE_SIZE,1,g);
+			}
+
 
 			/*
 			 * Draw the current piece. This cannot be drawn like the rest of the
@@ -465,6 +474,7 @@ public class BoardPanel extends JPanel {
 		g.setColor(Color.white);
 		g.drawString(Integer.toString(num),x, y );
 	}
+
 
 		public Dimension getDim() {
 			return d_start;
