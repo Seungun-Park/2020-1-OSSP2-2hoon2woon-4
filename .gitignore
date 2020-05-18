@@ -13,3 +13,4 @@ Client/bin
 /Server/Server/Debug
 /Server/Server/x64
 /Client/.settings
+*.prefs
