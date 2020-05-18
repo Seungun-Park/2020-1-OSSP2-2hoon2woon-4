@@ -1,4 +1,5 @@
 Client/bin
+/bin
 *.properties
 .idea/
 *.iml
