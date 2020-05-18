@@ -1,9 +1,12 @@
 package org.psnbtech;
 
+import org.psnbtech.Items.ItemManager;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -102,6 +105,8 @@ public class BoardPanel extends JPanel {
 	 */
 	private Tetris tetris;
 
+	private ItemManager itemManager;
+
 	/**
 	 * The tiles that make up the board.
 	 */
@@ -124,7 +129,7 @@ public class BoardPanel extends JPanel {
 		
 		d_start = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
 		setSize(d_start);
-		setPreferredSize(d_start);
+		//setPreferredSize(d_start);
 		setBackground(Color.BLACK);
 	}
 	
@@ -266,6 +271,7 @@ public class BoardPanel extends JPanel {
 				setTile(col, row + 1, getTile(col, row));
 			}
 		}
+		itemManager.deleteItem(line);
 		return true;
 	}
 	
@@ -342,7 +348,13 @@ public class BoardPanel extends JPanel {
 					}
 				}
 			}
-			
+
+			itemManager = tetris.getItemManager();
+			for(int i=0; i<itemManager.getItems().size(); i++){
+				drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE,itemManager.getItems().get(i).getX()*TILE_SIZE,1,g);
+			}
+
+
 			/*
 			 * Draw the current piece. This cannot be drawn like the rest of the
 			 * pieces because it's still not part of the game board. If it were
@@ -353,7 +365,7 @@ public class BoardPanel extends JPanel {
 			int pieceCol = tetris.getPieceCol();
 			int pieceRow = tetris.getPieceRow();
 			int rotation = tetris.getPieceRotation();
-			
+
 			//Draw the piece onto the board.
 			for(int col = 0; col < type.getDimension(); col++) {
 				for(int row = 0; row < type.getDimension(); row++) {
@@ -457,6 +469,12 @@ public class BoardPanel extends JPanel {
 			g.drawLine(x + i, y, x + i, y + TILE_SIZE - i - 1);
 		}
 	}
+
+	public void drawItem(int x, int y, int num, Graphics g){
+		g.setColor(Color.white);
+		g.drawString(Integer.toString(num),x, y );
+	}
+
 
 		public Dimension getDim() {
 			return d_start;

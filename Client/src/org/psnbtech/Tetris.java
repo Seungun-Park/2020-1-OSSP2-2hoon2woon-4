@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 import hoon2woon2.Client;
 import hoon2woon2.LoginFrame;
+import hoon2woon2.RankPanel;
+import org.psnbtech.Items.ItemManager;
 
 
 /**
@@ -50,16 +52,20 @@ public class Tetris extends JFrame implements ActionListener{
 	private BoardPanel board;
 
 	/**
-	 * writer : github.com/choi-gowoon
-	 * 2020.05.16
-	 * The Item instance
+	 * writer : choi-gowoon
+	 * The ItemManager instance
 	 */
-	private Items items;
+	private ItemManager itemManager;
 	
 	/**
 	 * The SidePanel instance.
 	 */
 	private SidePanel side;
+	
+	/**
+	 * The RankPanel instance.
+	 */
+	private RankPanel rank;
 	
 	/**
 	 * Whether or not the game is paused.
@@ -90,8 +96,13 @@ public class Tetris extends JFrame implements ActionListener{
 	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.05.16
+	 * boolean flag for items
 	 */
 	private boolean scoreIndex;
+
+	private boolean rotationIndex;
+
+	private boolean reverseIndex;
 	
 	/**
 	 * The random number generator. This is used to
@@ -114,7 +125,7 @@ public class Tetris extends JFrame implements ActionListener{
 	 */
 	private TileType nextType;
 
-	/*
+	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.04.26
 	 * The type of hold tile.
@@ -209,8 +220,8 @@ public class Tetris extends JFrame implements ActionListener{
 		 */
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
+		this.rank = new RankPanel(this);
 		this.tetrisBag = new ArrayList<Integer>();
-		this.items = new Items(board);
 		
 		/**2020-04-28 Seungun-Park
 		 * Menu control
@@ -233,6 +244,7 @@ public class Tetris extends JFrame implements ActionListener{
 		/*
 		 * Add the BoardPanel and SidePanel instances to the window.
 		 */
+		add(rank);
 		add(board);
 		add(side);
 		
@@ -263,40 +275,64 @@ public class Tetris extends JFrame implements ActionListener{
 						logicTimer.setCyclesPerSecond(25.0f);
 					}
 					break;
-					
+
 				/*
 				 * Move Left - When pressed, we check to see that the game is
 				 * not paused and that the position to the left of the current
 				 * position is valid. If so, we decrement the current column by 1.
 				 */
-				case KeyEvent.VK_LEFT:		
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
-						currentCol--;
+				/**
+				 * writer: choi gowoon
+				 * Move Left and Move Right
+				 * add flag for key reversing item
+				 */
+				case KeyEvent.VK_LEFT:
+					if(reverseIndex){
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol++;
+						}
 					}
-					
-					
+					else{
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol--;
+						}
+					}
 					break;
-					
+
 				/*
 				 * Move Right - When pressed, we check to see that the game is
 				 * not paused and that the position to the right of the current
 				 * position is valid. If so, we increment the current column by 1.
 				 */
 				case KeyEvent.VK_RIGHT:
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
-						currentCol++;
+					if(reverseIndex){
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol--;
+						}
+					}
+					else{
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol++;
+						}
 					}
 					break;
-					
+
 				/*
 				 * Rotate Anticlockwise - When pressed, check to see that the game is not paused
 				 * and then attempt to rotate the piece anticlockwise. Because of the size and
 				 * complexity of the rotation code, as well as it's similarity to clockwise
 				 * rotation, the code for rotating the piece is handled in another method.
 				 */
+				/**
+				 * writer: choi gowoon
+				 * Rotate Anticlockwise and clockwise
+				 * add flag for key nonRotation item
+				 */
 				case KeyEvent.VK_Z:
-					if(!isPaused) {
-						rotatePiece((currentRotation == 0) ? 3 : currentRotation - 1);
+					if(rotationIndex){
+						if(!isPaused) {
+							rotatePiece((currentRotation == 0) ? 3 : currentRotation - 1);
+						}
 					}
 					break;
 				
@@ -307,8 +343,10 @@ public class Tetris extends JFrame implements ActionListener{
 				 * rotation, the code for rotating the piece is handled in another method.
 				 */
 				case KeyEvent.VK_X:
-					if(!isPaused) {
-						rotatePiece((currentRotation == 3) ? 0 : currentRotation + 1);
+					if(rotationIndex){
+						if(!isPaused) {
+							rotatePiece((currentRotation == 3) ? 0 : currentRotation + 1);
+						}
 					}
 					break;
 					
@@ -395,6 +433,10 @@ public class Tetris extends JFrame implements ActionListener{
 		board.setVisible(true);
 	}
 
+	/**
+	 * writer : github.com/choi-gowoon
+	 * hold function
+	 */
 	public void holdTile(){
 		if(!isPaused && isHoldable) {
 			TileType temp = currentType;
@@ -423,7 +465,10 @@ public class Tetris extends JFrame implements ActionListener{
 		this.random = new Random();
 		this.isNewGame = true;
 		this.gameSpeed = 1.0f;
-		scoreIndex = true;
+		this.itemManager = new ItemManager(this, board);
+		scoreIndex = false;
+		rotationIndex = true;
+		reverseIndex = false;
 		
 		/*
 		 * Setup the timer to keep the game from running before the user presses enter
@@ -448,6 +493,7 @@ public class Tetris extends JFrame implements ActionListener{
 			 */
 			if(logicTimer.hasElapsedCycle() && !beforeVal) {
 				updateGame();
+				rank.update();
 			}
 		
 			//Decrement the drop cool down if necessary.
@@ -500,10 +546,10 @@ public class Tetris extends JFrame implements ActionListener{
 			int cleared = board.checkLines();
 			if(cleared > 0) {
 				if(scoreIndex){
-					score += 50 << cleared;
+					score += (50 << cleared)*2;
 				}
 				else{
-					score += (50 << cleared)*2;
+					score += 50 << cleared;
 				}
 			}
 			
@@ -537,7 +583,15 @@ public class Tetris extends JFrame implements ActionListener{
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
-			
+			spawnPiece();
+
+			/*
+			 * writer: choi gowoon
+			 * item action
+			 */
+			itemManager.generateItem();
+			itemManager.manageBadItem();
+
 		}		
 	}
 	
@@ -553,6 +607,7 @@ public class Tetris extends JFrame implements ActionListener{
 		board.repaint();
 		side.setBounds(left + board.getWidth(), top, side.getWidth(), side.getHeight());
 		side.repaint();	
+		rank.repaint();
 	}
 	
 	/**
@@ -569,6 +624,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.nextType = TileType.values()[nextTetromino()];
 		this.holdType = null;
 		this.isHoldable = true;
+		itemManager.clear();
 		board.clear();
 		logicTimer.reset();
 		logicTimer.setCyclesPerSecond(gameSpeed);
@@ -617,6 +673,7 @@ public class Tetris extends JFrame implements ActionListener{
 		 * because it means that the pieces on the board have gotten too high.
 		 */
 		if(!board.isValidAndEmpty(currentType, currentCol, currentRow, currentRotation)) {
+			rank.uploadScore();
 			this.isGameOver = true;
 			logicTimer.setPaused(true);
 		}		
@@ -731,7 +788,7 @@ public class Tetris extends JFrame implements ActionListener{
 		return nextType;
 	}
 
-	/*
+	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.04.26
 	 * Gets the hold type of piece we're using.
@@ -764,7 +821,38 @@ public class Tetris extends JFrame implements ActionListener{
 	public int getPieceRotation() {
 		return currentRotation;
 	}
-	
+
+	/**
+	 * writer : choi gowoon
+	 * Gets the itemManager
+	 * @return The itemManager.
+	 */
+	public ItemManager getItemManager() { return itemManager; }
+
+	/**
+	 * writer : choi gowoon
+	 * Sets the scoreIndex
+	 */
+	public void setScoreIndex(boolean scoreIndex) {
+		this.scoreIndex = scoreIndex;
+	}
+
+	/**
+	 * writer : choi gowoon
+	 * Sets the rotationIndex
+	 */
+	public void setRotationIndex(boolean rotationIndex) {
+		this.rotationIndex = rotationIndex;
+	}
+
+	/**
+	 * writer : choi gowoon
+	 * Sets the reverseIndex
+	 */
+	public void setReverseIndex(boolean reverseIndex) {
+		this.reverseIndex = reverseIndex;
+	}
+
 	/**
 	 * 2020-04-28 Seungun-Park
 	 * menu action listener
