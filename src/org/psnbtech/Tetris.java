@@ -342,18 +342,7 @@ public class Tetris extends JFrame implements ActionListener{
 				 * hold function
 				 */
 				case KeyEvent.VK_C:
-					if(!isPaused && isHoldable) {
-						TileType temp = currentType;
-						if(holdType == null){
-							currentType = getNextPieceType();
-							nextType = TileType.values()[nextTetromino()];
-						}
-						else{
-							currentType = holdType;
-						}
-						holdType = temp;
-						isHoldable = false;
-					}
+					holdTile();
 					break;
 				
 				/*
@@ -404,6 +393,24 @@ public class Tetris extends JFrame implements ActionListener{
 		setLocationRelativeTo(null);
 		setVisible(true);
 		board.setVisible(true);
+	}
+
+	public void holdTile(){
+		if(!isPaused && isHoldable) {
+			TileType temp = currentType;
+			if(holdType == null){
+				currentType = getNextPieceType();
+				nextType = TileType.values()[nextTetromino()];
+			}
+			else{
+				currentType = holdType;
+			}
+			currentCol = currentType.getSpawnColumn();
+			currentRow = currentType.getSpawnRow();
+			currentRotation = 0;
+			holdType = temp;
+			isHoldable = false;
+		}
 	}
 	
 	/**

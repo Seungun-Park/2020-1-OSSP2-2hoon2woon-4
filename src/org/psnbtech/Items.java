@@ -129,6 +129,13 @@ public class Items {
     }
 
     // TODO ! Function : itemLocation - decide the location of items ( param : tile info..? boar지d info..?)
+    int[] getItemLocation(BoardPanel board){
+        int[] result = new int[2];
+        int[] target;
+        //for(int i=0;  )
+
+        return result;
+    }
 
     // TODO ! Item generating term > 5 tetromino
     // Function : itemUpdate - return item randomly
