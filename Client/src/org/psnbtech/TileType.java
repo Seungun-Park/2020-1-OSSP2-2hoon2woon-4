@@ -12,182 +12,182 @@ public enum TileType {
 	/**
 	 * Piece TypeI.
 	 */
-	TypeI(new Color(BoardPanel.COLOR_MIN, BoardPanel.COLOR_MAX, BoardPanel.COLOR_MAX), 4, 4, 1, new boolean[][] {
+	TypeI(new Color(BoardPanel.COLOR_MIN, BoardPanel.COLOR_MAX, BoardPanel.COLOR_MAX), 4, 4, 1, new int[][] {
 		{
-			false,	false,	false,	false,
-			true,	true,	true,	true,
-			false,	false,	false,	false,
-			false,	false,	false,	false,
+			0,	0,	0,	0,
+			1,	1,	1,	1,
+			0,	0,	0,	0,
+			0,	0,	0,	0,
 		},
 		{
-			false,	false,	true,	false,
-			false,	false,	true,	false,
-			false,	false,	true,	false,
-			false,	false,	true,	false,
+			0,	0,	1,	0,
+			0,	0,	1,	0,
+			0,	0,	1,	0,
+			0,	0,	1,	0,
 		},
 		{
-			false,	false,	false,	false,
-			false,	false,	false,	false,
-			true,	true,	true,	true,
-			false,	false,	false,	false,
+			0,	0,	0,	0,
+			0,	0,	0,	0,
+			1,	1,	1,	1,
+			0,	0,	0,	0,
 		},
 		{
-			false,	true,	false,	false,
-			false,	true,	false,	false,
-			false,	true,	false,	false,
-			false,	true,	false,	false,
+			0,	1,	0,	0,
+			0,	1,	0,	0,
+			0,	1,	0,	0,
+			0,	1,	0,	0,
 		}
 	}),
 	
 	/**
 	 * Piece TypeJ.
 	 */
-	TypeJ(new Color(BoardPanel.COLOR_MIN, BoardPanel.COLOR_MIN, BoardPanel.COLOR_MAX), 3, 3, 2, new boolean[][] {
+	TypeJ(new Color(BoardPanel.COLOR_MIN, BoardPanel.COLOR_MIN, BoardPanel.COLOR_MAX), 3, 3, 2, new int[][] {
 		{
-			true,	false,	false,
-			true,	true,	true,
-			false,	false,	false,
+			1,	0,	0,
+			1,	1,	1,
+			0,	0,	0,
 		},
 		{
-			false,	true,	true,
-			false,	true,	false,
-			false,	true,	false,
+			0,	1,	1,
+			0,	1,	0,
+			0,	1,	0,
 		},
 		{
-			false,	false,	false,
-			true,	true,	true,
-			false,	false,	true,
+			0,	0,	0,
+			1,	1,	1,
+			0,	0,	1,
 		},
 		{
-			false,	true,	false,
-			false,	true,	false,
-			true,	true,	false,
+			0,	1,	0,
+			0,	1,	0,
+			1,	1,	0,
 		}
 	}),
 	
 	/**
 	 * Piece TypeL.
 	 */
-	TypeL(new Color(BoardPanel.COLOR_MAX, 127, BoardPanel.COLOR_MIN), 3, 3, 2, new boolean[][] {
+	TypeL(new Color(BoardPanel.COLOR_MAX, 127, BoardPanel.COLOR_MIN), 3, 3, 2, new int[][] {
 		{
-			false,	false,	true,
-			true,	true,	true,
-			false,	false,	false,
+			0,	0,	1,
+			1,	1,	1,
+			0,	0,	0,
 		},
 		{
-			false,	true,	false,
-			false,	true,	false,
-			false,	true,	true,
+			0,	1,	0,
+			0,	1,	0,
+			0,	1,	1,
 		},
 		{
-			false,	false,	false,
-			true,	true,	true,
-			true,	false,	false,
+			0,	0,	0,
+			1,	1,	1,
+			0,	0,	0,
 		},
 		{
-			true,	true,	false,
-			false,	true,	false,
-			false,	true,	false,
+			1,	1,	0,
+			0,	1,	0,
+			0,	1,	0,
 		}
 	}),
 	
 	/**
 	 * Piece TypeO.
 	 */
-	TypeO(new Color(BoardPanel.COLOR_MAX, BoardPanel.COLOR_MAX, BoardPanel.COLOR_MIN), 2, 2, 2, new boolean[][] {
+	TypeO(new Color(BoardPanel.COLOR_MAX, BoardPanel.COLOR_MAX, BoardPanel.COLOR_MIN), 2, 2, 2, new int[][] {
 		{
-			true,	true,
-			true,	true,
+			1,	1,
+			1,	1,
 		},
 		{
-			true,	true,
-			true,	true,
+			1,	1,
+			1,	1,
 		},
 		{	
-			true,	true,
-			true,	true,
+			1,	1,
+			1,	1,
 		},
 		{
-			true,	true,
-			true,	true,
+			1,	1,
+			1,	1,
 		}
 	}),
 	
 	/**
 	 * Piece TypeS.
 	 */
-	TypeS(new Color(BoardPanel.COLOR_MIN, BoardPanel.COLOR_MAX, BoardPanel.COLOR_MIN), 3, 3, 2, new boolean[][] {
+	TypeS(new Color(BoardPanel.COLOR_MIN, BoardPanel.COLOR_MAX, BoardPanel.COLOR_MIN), 3, 3, 2, new int[][] {
 		{
-			false,	true,	true,
-			true,	true,	false,
-			false,	false,	false,
+			0,	1,	1,
+			1,	1,	0,
+			0,	0,	0,
 		},
 		{
-			false,	true,	false,
-			false,	true,	true,
-			false,	false,	true,
+			0,	1,	0,
+			0,	1,	1,
+			0,	0,	1,
 		},
 		{
-			false,	false,	false,
-			false,	true,	true,
-			true,	true,	false,
+			0,	0,	0,
+			0,	1,	1,
+			1,	1,	0,
 		},
 		{
-			true,	false,	false,
-			true,	true,	false,
-			false,	true,	false,
+			1,	0,	0,
+			1,	1,	0,
+			0,	1,	0,
 		}
 	}),
 	
 	/**
 	 * Piece TypeT.
 	 */
-	TypeT(new Color(128, BoardPanel.COLOR_MIN, 128), 3, 3, 2, new boolean[][] {
+	TypeT(new Color(128, BoardPanel.COLOR_MIN, 128), 3, 3, 2, new int[][] {
 		{
-			false,	true,	false,
-			true,	true,	true,
-			false,	false,	false,
+			0,	1,	0,
+			1,	1,	1,
+			0,	0,	0,
 		},
 		{
-			false,	true,	false,
-			false,	true,	true,
-			false,	true,	false,
+			0,	1,	0,
+			0,	1,	1,
+			0,	1,	0,
 		},
 		{
-			false,	false,	false,
-			true,	true,	true,
-			false,	true,	false,
+			0,	0,	0,
+			1,	1,	1,
+			0,	1,	0,
 		},
 		{
-			false,	true,	false,
-			true,	true,	false,
-			false,	true,	false,
+			0,	1,	0,
+			1,	1,	0,
+			0,	1,	0,
 		}
 	}),
 	
 	/**
 	 * Piece TypeZ.
 	 */
-	TypeZ(new Color(BoardPanel.COLOR_MAX, BoardPanel.COLOR_MIN, BoardPanel.COLOR_MIN), 3, 3, 2, new boolean[][] {
+	TypeZ(new Color(BoardPanel.COLOR_MAX, BoardPanel.COLOR_MIN, BoardPanel.COLOR_MIN), 3, 3, 2, new int[][] {
 		{
-			true,	true,	false,
-			false,	true,	true,
-			false,	false,	false,
+			1,	1,	0,
+			0,	1,	1,
+			0,	0,	0,
 		},
 		{
-			false,	false,	true,
-			false,	true,	true,
-			false,	true,	false,
+			0,	0,	1,
+			0,	1,	1,
+			0,	1,	0,
 		},
 		{
-			false,	false,	false,
-			true,	true,	false,
-			false,	true,	true,
+			0,	0,	0,
+			1,	1,	0,
+			0,	1,	1,
 		},
 		{
-			false,	true,	false,
-			true,	true,	false,
-			true,	false,	false,
+			0,	1,	0,
+			1,	1,	0,
+			1,	0,	0,
 		}
 	});
 		
@@ -238,7 +238,7 @@ public enum TileType {
 	/**
 	 * The tiles for this piece. Each piece has an array of tiles for each rotation.
 	 */
-	private boolean[][] tiles;
+	private int[][] tiles;
 	
 	/**
 	 * Creates a new TileType.
@@ -248,7 +248,7 @@ public enum TileType {
 	 * @param rows The number of rows.
 	 * @param tiles The tiles.
 	 */
-	private TileType(Color color, int dimension, int cols, int rows, boolean[][] tiles) {
+	private TileType(Color color, int dimension, int cols, int rows, int[][] tiles) {
 		this.baseColor = color;
 		this.lightColor = color.brighter();
 		this.darkColor = color.darker();
@@ -334,7 +334,7 @@ public enum TileType {
 	 * @param rotation The rotation to check in.
 	 * @return Whether or not a tile resides there.
 	 */
-	public boolean isTile(int x, int y, int rotation) {
+	public int isTile(int x, int y, int rotation) {
 		return tiles[rotation][y * dimension + x];
 	}
 	
@@ -351,7 +351,7 @@ public enum TileType {
 		 */
 		for(int x = 0; x < dimension; x++) {
 			for(int y = 0; y < dimension; y++) {
-				if(isTile(x, y, rotation)) {
+				if(isTile(x, y, rotation) == 1) {
 					return x;
 				}
 			}
@@ -372,7 +372,7 @@ public enum TileType {
 		 */
 		for(int x = dimension - 1; x >= 0; x--) {
 			for(int y = 0; y < dimension; y++) {
-				if(isTile(x, y, rotation)) {
+				if(isTile(x, y, rotation) == 1) {
 					return dimension - x;
 				}
 			}
@@ -393,7 +393,7 @@ public enum TileType {
 		 */
 		for(int y = 0; y < dimension; y++) {
 			for(int x = 0; x < dimension; x++) {
-				if(isTile(x, y, rotation)) {
+				if(isTile(x, y, rotation) == 1) {
 					return y;
 				}
 			}
@@ -414,7 +414,7 @@ public enum TileType {
 		 */
 		for(int y = dimension - 1; y >= 0; y--) {
 			for(int x = 0; x < dimension; x++) {
-				if(isTile(x, y, rotation)) {
+				if(isTile(x, y, rotation) == 1) {
 					return dimension - y;
 				}
 			}

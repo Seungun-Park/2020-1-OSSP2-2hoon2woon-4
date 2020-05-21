@@ -191,7 +191,7 @@ public class BoardPanel extends JPanel {
 		 */
 		for(int col = 0; col < type.getDimension(); col++) {
 			for(int row = 0; row < type.getDimension(); row++) {
-				if(type.isTile(col, row, rotation) && isOccupied(x + col, y + row)) {
+				if(type.isTile(col, row, rotation) == 1 && isOccupied(x + col, y + row)) {
 					return false;
 				}
 			}
@@ -215,7 +215,7 @@ public class BoardPanel extends JPanel {
 		 */
 		for(int col = 0; col < type.getDimension(); col++) {
 			for(int row = 0; row < type.getDimension(); row++) {
-				if(type.isTile(col, row, rotation)) {
+				if(type.isTile(col, row, rotation) == 1) {
 					setTile(col + x, row + y, type);
 				}
 			}
@@ -369,7 +369,7 @@ public class BoardPanel extends JPanel {
 			//Draw the piece onto the board.
 			for(int col = 0; col < type.getDimension(); col++) {
 				for(int row = 0; row < type.getDimension(); row++) {
-					if(pieceRow + row >= 2 && type.isTile(col, row, rotation)) {
+					if(pieceRow + row >= 2 && type.isTile(col, row, rotation) == 1) {
 						drawTile(type, (pieceCol + col) * TILE_SIZE, (pieceRow + row - HIDDEN_ROW_COUNT) * TILE_SIZE, g);
 					}
 				}
@@ -394,7 +394,7 @@ public class BoardPanel extends JPanel {
 				//Draw the ghost piece.
 				for(int col = 0; col < type.getDimension(); col++) {
 					for(int row = 0; row < type.getDimension(); row++) {
-						if(lowest + row >= 2 && type.isTile(col, row, rotation)) {
+						if(lowest + row >= 2 && type.isTile(col, row, rotation) == 1) {
 							drawTile(base, base.brighter(), base.darker(), (pieceCol + col) * TILE_SIZE, (lowest + row - HIDDEN_ROW_COUNT) * TILE_SIZE, g);
 						}
 					}

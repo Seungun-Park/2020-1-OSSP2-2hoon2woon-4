@@ -7,6 +7,7 @@ public class Item_DeleteSomeLine extends ItemType {
         this.message = "Delete Some Line !!!";
     }
 
+    // TODO
     @Override
     public void action() {
 
