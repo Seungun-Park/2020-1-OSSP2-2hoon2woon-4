@@ -191,7 +191,7 @@ public class BoardPanel extends JPanel {
 		 */
 		for(int col = 0; col < type.getDimension(); col++) {
 			for(int row = 0; row < type.getDimension(); row++) {
-				if(type.isTile(col, row, rotation) && isOccupied(x + col, y + row)) {
+				if(type.isTile(col, row, rotation) == 1 && isOccupied(x + col, y + row)) {
 					return false;
 				}
 			}
@@ -215,7 +215,7 @@ public class BoardPanel extends JPanel {
 		 */
 		for(int col = 0; col < type.getDimension(); col++) {
 			for(int row = 0; row < type.getDimension(); row++) {
-				if(type.isTile(col, row, rotation)) {
+				if(type.isTile(col, row, rotation) == 1) {
 					setTile(col + x, row + y, type);
 				}
 			}
@@ -257,6 +257,9 @@ public class BoardPanel extends JPanel {
 		 * empty, then the row is not full.
 		 */
 		for(int col = 0; col < COL_COUNT; col++) {
+			if(tiles[line][col] == TileType.UnremovableLine){
+				return false;
+			}
 			if(!isOccupied(col, line)) {
 				return false;
 			}
@@ -369,7 +372,7 @@ public class BoardPanel extends JPanel {
 			//Draw the piece onto the board.
 			for(int col = 0; col < type.getDimension(); col++) {
 				for(int row = 0; row < type.getDimension(); row++) {
-					if(pieceRow + row >= 2 && type.isTile(col, row, rotation)) {
+					if(pieceRow + row >= 2 && type.isTile(col, row, rotation) == 1) {
 						drawTile(type, (pieceCol + col) * TILE_SIZE, (pieceRow + row - HIDDEN_ROW_COUNT) * TILE_SIZE, g);
 					}
 				}
@@ -394,7 +397,7 @@ public class BoardPanel extends JPanel {
 				//Draw the ghost piece.
 				for(int col = 0; col < type.getDimension(); col++) {
 					for(int row = 0; row < type.getDimension(); row++) {
-						if(lowest + row >= 2 && type.isTile(col, row, rotation)) {
+						if(lowest + row >= 2 && type.isTile(col, row, rotation) == 1) {
 							drawTile(base, base.brighter(), base.darker(), (pieceCol + col) * TILE_SIZE, (lowest + row - HIDDEN_ROW_COUNT) * TILE_SIZE, g);
 						}
 					}
@@ -473,6 +476,40 @@ public class BoardPanel extends JPanel {
 	public void drawItem(int x, int y, int num, Graphics g){
 		g.setColor(Color.white);
 		g.drawString(Integer.toString(num),x, y );
+	}
+
+	public void addUnremovableLine(){
+		for(int row = 1; row < ROW_COUNT; row++) {
+			for(int col = 0; col < COL_COUNT; col++) {
+				setTile(col, row - 1, getTile(col, row));
+			}
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[ROW_COUNT-1][col] = TileType.values()[7];
+		}
+	}
+
+	public void removeUnremovableLine(){
+		int row;
+		for(row = ROW_COUNT-1; row >= 0; row--){
+			if(getTile(0,row) != TileType.UnremovableLine) break;
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[row-1][col] = TileType.values()[8];
+		}
+	}
+
+	public void removeLine(){
+		int row;
+		for(row = ROW_COUNT-1; row >= 0; row--){
+			if(getTile(0,row) != TileType.UnremovableLine) break;
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[row][col] = TileType.values()[8];
+		}
 	}
 
 

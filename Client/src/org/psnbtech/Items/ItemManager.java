@@ -31,9 +31,10 @@ public class ItemManager {
         return tetris;
     }
 
+    // TODO ! using board;
     public int[] itemLocation(){
         int[] location = new int[2];
-        // TODO ! using board;
+
         return location;
     }
 

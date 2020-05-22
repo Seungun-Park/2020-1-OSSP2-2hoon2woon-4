@@ -9,6 +9,7 @@ public class Item_DeleteSomeLine extends ItemType {
 
     @Override
     public void action() {
-
+        itemManager.getBoard().removeUnremovableLine();
+        itemManager.getBoard().removeLine();
     }
 }

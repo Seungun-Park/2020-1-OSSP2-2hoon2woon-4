@@ -44,7 +44,7 @@ public class Tetris extends JFrame implements ActionListener{
 	/**
 	 * The number of pieces that exist.
 	 */
-	private static final int TYPE_COUNT = TileType.values().length;
+	private static final int TYPE_COUNT = TileType.values().length-2;
 		
 	/**
 	 * The BoardPanel instance.
@@ -525,7 +525,7 @@ public class Tetris extends JFrame implements ActionListener{
 		/*
 		 * Check to see if the piece's position can move down to the next row.
 		 */
-			
+
 		if(board.isValidAndEmpty(currentType, currentCol, currentRow + 1, currentRotation)) {
 			//Increment the current row if it's safe to do so.
 			currentRow++;
@@ -660,6 +660,7 @@ public class Tetris extends JFrame implements ActionListener{
 		 * Poll the last piece and reset our position and rotation to
 		 * their default variables, then pick the next piece to use.
 		 */
+
 		this.currentType = nextType;
 		this.currentCol = currentType.getSpawnColumn();
 		this.currentRow = currentType.getSpawnRow();

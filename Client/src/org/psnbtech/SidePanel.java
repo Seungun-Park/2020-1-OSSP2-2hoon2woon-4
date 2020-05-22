@@ -214,7 +214,7 @@ public class SidePanel extends JPanel {
 			 */
 			for(int row = 0; row < dimension; row++) {
 				for(int col = 0; col < dimension; col++) {
-					if(nextType.isTile(col, row, 0)) {
+					if(nextType.isTile(col, row, 0) == 1) {
 						drawNextTile(nextType, startX + ((col - left) * TILE_SIZE), startY + ((row - top) * TILE_SIZE), g);
 					}
 				}
@@ -258,7 +258,7 @@ public class SidePanel extends JPanel {
 			 */
 			for(int row = 0; row < dimension; row++) {
 				for(int col = 0; col < dimension; col++) {
-					if(holdType.isTile(col, row, 0)) {
+					if(holdType.isTile(col, row, 0) == 1) {
 						drawHoldTile(holdType, startX + ((col - left) * TILE_SIZE), startY + ((row - top) * TILE_SIZE), g);
 					}
 				}
