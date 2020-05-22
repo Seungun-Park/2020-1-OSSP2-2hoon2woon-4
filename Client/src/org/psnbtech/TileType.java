@@ -189,7 +189,38 @@ public enum TileType {
 			1,	1,	0,
 			1,	0,	0,
 		}
-	});
+	}),
+
+	UnremovableLine(new Color(116, 116, 116), 1, 1, 1, new int[][] {
+			{
+					-1
+			},
+			{
+					-1
+			},
+			{
+					-1
+			},
+			{
+					-1
+			}
+	}),
+
+	RemovableLine(new Color(116, 116, 116), 1, 1, 1, new int[][] {
+			{
+					1
+			},
+			{
+					1
+			},
+			{
+					1
+			},
+			{
+					1
+			}
+	})
+	;
 		
 	/**
 	 * The base color of tiles of this type.
@@ -351,7 +382,7 @@ public enum TileType {
 		 */
 		for(int x = 0; x < dimension; x++) {
 			for(int y = 0; y < dimension; y++) {
-				if(isTile(x, y, rotation) == 1) {
+				if(isTile(x, y, rotation) == 1|| isTile(x, y, rotation) == -1) {
 					return x;
 				}
 			}
@@ -372,7 +403,7 @@ public enum TileType {
 		 */
 		for(int x = dimension - 1; x >= 0; x--) {
 			for(int y = 0; y < dimension; y++) {
-				if(isTile(x, y, rotation) == 1) {
+				if(isTile(x, y, rotation) == 1|| isTile(x, y, rotation) == -1) {
 					return dimension - x;
 				}
 			}
@@ -393,7 +424,7 @@ public enum TileType {
 		 */
 		for(int y = 0; y < dimension; y++) {
 			for(int x = 0; x < dimension; x++) {
-				if(isTile(x, y, rotation) == 1) {
+				if(isTile(x, y, rotation) == 1|| isTile(x, y, rotation) == -1) {
 					return y;
 				}
 			}
@@ -414,7 +445,7 @@ public enum TileType {
 		 */
 		for(int y = dimension - 1; y >= 0; y--) {
 			for(int x = 0; x < dimension; x++) {
-				if(isTile(x, y, rotation) == 1) {
+				if(isTile(x, y, rotation) == 1 || isTile(x, y, rotation) == -1) {
 					return dimension - y;
 				}
 			}

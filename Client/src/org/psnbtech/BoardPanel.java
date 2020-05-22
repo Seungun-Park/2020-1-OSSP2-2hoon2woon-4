@@ -257,6 +257,9 @@ public class BoardPanel extends JPanel {
 		 * empty, then the row is not full.
 		 */
 		for(int col = 0; col < COL_COUNT; col++) {
+			if(tiles[line][col] == TileType.UnremovableLine){
+				return false;
+			}
 			if(!isOccupied(col, line)) {
 				return false;
 			}
@@ -473,6 +476,40 @@ public class BoardPanel extends JPanel {
 	public void drawItem(int x, int y, int num, Graphics g){
 		g.setColor(Color.white);
 		g.drawString(Integer.toString(num),x, y );
+	}
+
+	public void addUnremovableLine(){
+		for(int row = 1; row < ROW_COUNT; row++) {
+			for(int col = 0; col < COL_COUNT; col++) {
+				setTile(col, row - 1, getTile(col, row));
+			}
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[ROW_COUNT-1][col] = TileType.values()[7];
+		}
+	}
+
+	public void removeUnremovableLine(){
+		int row;
+		for(row = ROW_COUNT-1; row >= 0; row--){
+			if(getTile(0,row) != TileType.UnremovableLine) break;
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[row-1][col] = TileType.values()[8];
+		}
+	}
+
+	public void removeLine(){
+		int row;
+		for(row = ROW_COUNT-1; row >= 0; row--){
+			if(getTile(0,row) != TileType.UnremovableLine) break;
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[row][col] = TileType.values()[8];
+		}
 	}
 
 

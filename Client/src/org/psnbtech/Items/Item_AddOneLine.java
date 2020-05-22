@@ -10,6 +10,6 @@ public class Item_AddOneLine extends ItemType {
     // TODO
     @Override
     public void action() {
-
+        itemManager.getBoard().addUnremovableLine();
     }
 }
