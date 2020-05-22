@@ -305,7 +305,7 @@ public class BoardPanel extends JPanel {
 	 * @param y The row.
 	 * @return The tile.
 	 */
-	private TileType getTile(int x, int y) {
+	public TileType getTile(int x, int y) {
 		return tiles[y][x];
 	}
 	
@@ -473,6 +473,8 @@ public class BoardPanel extends JPanel {
 		}
 	}
 
+
+	//TODO comment
 	public void drawItem(int x, int y, int num, Graphics g){
 		g.setColor(Color.white);
 		g.drawString(Integer.toString(num),x, y );

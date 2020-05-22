@@ -31,37 +31,58 @@ public class ItemManager {
         return tetris;
     }
 
+    class Point{
+        int x;
+        int y;
+        Point(){
+        }
+        Point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
     // TODO ! using board;
-    public int[] itemLocation(){
-        int[] location = new int[2];
-
+    public Point itemLocation(){
+        Point location = new Point();
+        Vector<Point> list = new Vector<>();
+        for(int row = 0; row < board.ROW_COUNT; row++){
+            for(int col = 0; col < board.COL_COUNT; col++){
+                if(board.getTile(col, row)!=null){
+                    list.add(new Point(col, row));
+                }
+            }
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(list.size()-1);
+        location.x = list.get(randomIndex).x;
+        location.y = list.get(randomIndex).y;
         return location;
     }
 
     public void generateItem(){
         if(itemTerm == 5){
             itemTerm = 0;
-            int[] location = itemLocation();
+            Point location = itemLocation();
             Random random = new Random();
             int index = random.nextInt(ITEM_NUM-1) + 1;
             switch (index){
                 case 1:
-                    items.add(new Item_AddOneLine(location[0],location[1], this));
+                    items.add(new Item_AddOneLine(location.x,location.y, this));
                     break;
                 case 2:
-                    items.add(new Item_DeleteAllBlocks(location[0],location[1], this));
+                    items.add(new Item_DeleteAllBlocks(location.x,location.y, this));
                     break;
                 case 3:
-                    items.add(new Item_DeleteSomeLine(location[0],location[1], this));
+                    items.add(new Item_DeleteSomeLine(location.x,location.y, this));
                     break;
                 case 4:
-                    items.add(new Item_DisableRotate(location[0],location[1], this));
+                    items.add(new Item_DisableRotate(location.x,location.y, this));
                     break;
                 case 5:
-                    items.add(new Item_DoubleScore(location[0],location[1], this));
+                    items.add(new Item_DoubleScore(location.x,location.y, this));
                     break;
                 case 6:
-                    items.add(new Item_ReverseKey(location[0],location[1],this));
+                    items.add(new Item_ReverseKey(location.x,location.y,this));
                     break;
             }
         }
