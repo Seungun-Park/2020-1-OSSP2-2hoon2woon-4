@@ -44,7 +44,7 @@ public class Tetris extends JFrame implements ActionListener{
 	/**
 	 * The index for game mode
 	 */
-	private int mode = 1;
+	private int mode = 0;
 
 	/**
 	 * The Group of variables or instances for item mode
@@ -190,6 +190,8 @@ public class Tetris extends JFrame implements ActionListener{
 	private Dimension d_start;
 	private Dimension d_now;
 	
+	private int addTimer=1;
+	
 	/** 2020-04-28 Seungun-Park
 	 */
 	//program menu
@@ -200,6 +202,10 @@ public class Tetris extends JFrame implements ActionListener{
 	JMenu mn_account = new JMenu("Account");
 	JMenuItem item_login = new JMenuItem("Login");
 	JMenuItem item_logout = new JMenuItem("Logout");
+	JMenu mn_mode = new JMenu("Mode");
+	JMenuItem item_basic = new JMenuItem("Basic");
+	JMenuItem item_disturb = new JMenuItem("Interrupt");
+	JMenuItem item_item = new JMenuItem("Item");
 	//socket program
 	private Client client;
 	private static int user = -1;
@@ -244,14 +250,21 @@ public class Tetris extends JFrame implements ActionListener{
 		item_exit.addActionListener(this);
 		item_login.addActionListener(this);
 		item_logout.addActionListener(this);
+		item_basic.addActionListener(this);
+		item_disturb.addActionListener(this);
+		item_item.addActionListener(this);
 		
 		mn_file.add(item_new);
 		mn_file.add(item_exit);
 		mn_account.add(item_login);
 		mn_account.add(item_logout);
+		mn_mode.add(item_basic);
+		mn_mode.add(item_disturb);
+		mn_mode.add(item_item);
 		
 		menu.add(mn_file);
 		menu.add(mn_account);
+		menu.add(mn_mode);
 		
 		setJMenuBar(menu);
 		
@@ -404,6 +417,7 @@ public class Tetris extends JFrame implements ActionListener{
 				 */
 				case KeyEvent.VK_SPACE:
 					isHardDrop=true;
+					addTimer = 0;
 					int cnt=0;
 					while(board.isValidAndEmpty(currentType, currentCol, currentRow+cnt, currentRotation)) {
 						cnt++;
@@ -571,7 +585,7 @@ public class Tetris extends JFrame implements ActionListener{
 			currentRow++;
 		} 
 		
-		else {
+		else if(addTimer == 0){
 			/*
 			 * We've either reached the bottom of the board, or landed on another piece, so
 			 * we need to add the piece to the board.
@@ -623,21 +637,36 @@ public class Tetris extends JFrame implements ActionListener{
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
-
-
-
-			/**
-			 * the code for item mode in update
-			 * writer: choi gowoon
-			 * item action
-			 */
-			if(mode == 1){
+		
+			switch(mode) {
+				/**
+				 * the code for item mode in update
+				 * writer: choi gowoon
+				 * item action
+				 */
+			case 1:
 				itemManager.generateItem();
 				itemManager.manageBadItem();
 
 				board.checkLines();
+				break;
+			
+			/**
+			 * Updates the game and handles the bulk of it's logic.
+			 * fixed by cha seung hoon on 2020.05.19
+			 * because of adding interrupt block
+			 */
+			case 2:
+				if(cleared>0)
+					makeInterrupt();
+				break;
 			}
-		}		
+			
+			addTimer = 2;
+		}
+		else {
+			addTimer--;
+		}
 	}
 	
 	/**
@@ -910,6 +939,31 @@ public class Tetris extends JFrame implements ActionListener{
 	public void setReverseTimer(long reverseTimer) {
 		this.reverseTimer = reverseTimer;
 	}
+	
+	public int getMode() {
+		return this.mode;
+	}
+	/**
+	 * writer : cha seung hoon
+	 * 2020.05.19
+	 * creating interrupt block
+	 */
+	public void makeInterrupt() {
+		int randCol;
+		int randRow;
+		int randRot;
+
+		while(true) {
+			randCol=5+random.nextInt(10);
+			randRow=random.nextInt(10);
+			randRot=random.nextInt(1);
+
+			if(board.isValidAndEmpty(currentType, randCol, randRow, randRot))
+				break;
+		}
+
+		board.addPiece(currentType, randCol, randRow, randRot);
+	}
 
 	/**
 	 * 2020-04-28 Seungun-Park
@@ -948,6 +1002,24 @@ public class Tetris extends JFrame implements ActionListener{
 				user = -1;
 				userid = "";
 			}
+		}
+		if(event.getSource() == item_basic) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 0;
+		}
+		if(event.getSource() == item_disturb) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 2;
+		}
+		if(event.getSource() == item_item) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 1;
 		}
 	}
 }
