@@ -5,6 +5,7 @@ public class Item_DeleteSomeLine extends ItemType {
         super(x, y, itemManager);
         this.isBad = false;
         this.message = "Delete Some Line !!!";
+        this.itemIndex = 5;
     }
 
     @Override
@@ -12,4 +13,5 @@ public class Item_DeleteSomeLine extends ItemType {
         itemManager.getBoard().removeUnremovableLine();
         itemManager.getBoard().removeLine();
     }
+
 }

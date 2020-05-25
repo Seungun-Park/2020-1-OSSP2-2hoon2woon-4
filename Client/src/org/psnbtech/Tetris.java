@@ -99,10 +99,15 @@ public class Tetris extends JFrame implements ActionListener{
 	 * boolean flag for items
 	 */
 	private boolean scoreIndex;
+	private long scoreTimer;
 
 	private boolean rotationIndex;
+	private long rotaionTimer;
 
 	private boolean reverseIndex;
+	private long reverseTimer;
+
+	private static int TIME_LIMIT = 30;
 	
 	/**
 	 * The random number generator. This is used to
@@ -466,6 +471,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.isNewGame = true;
 		this.gameSpeed = 1.0f;
 		this.itemManager = new ItemManager(this, board);
+		this.board.clear();
 		scoreIndex = false;
 		rotationIndex = true;
 		reverseIndex = false;
@@ -500,10 +506,28 @@ public class Tetris extends JFrame implements ActionListener{
 			if(dropCooldown > 0) {
 				dropCooldown--;
 			}
-			
+
+			if(!rotationIndex){
+				if(System.currentTimeMillis() - rotaionTimer >= TIME_LIMIT*1000){
+					rotationIndex = true;
+				}
+			}
+
+			if(scoreIndex){
+				if(System.currentTimeMillis() - scoreTimer >= TIME_LIMIT*1000){
+					scoreIndex = false;
+				}
+			}
+
+			if(reverseIndex){
+				if(System.currentTimeMillis() - reverseTimer >= TIME_LIMIT*1000){
+					reverseIndex = false;
+				}
+			}
+
 			//Display the window to the user.
 			renderGame();
-			
+
 			/*
 			 * Sleep to cap the framerate.
 			 */
@@ -537,7 +561,7 @@ public class Tetris extends JFrame implements ActionListener{
 			 * we need to add the piece to the board.
 			 */
 			board.addPiece(currentType, currentCol, currentRow, currentRotation);
-			
+
 			/*
 			 * Check to see if adding the new piece resulted in any cleared lines. If so,
 			 * increase the player's score. (Up to 4 lines can be cleared in a single go;
@@ -578,11 +602,12 @@ public class Tetris extends JFrame implements ActionListener{
 			 * used in the "Level" string in the SidePanel.
 			 */
 			level = (int)(gameSpeed * 1.70f);
-			
+
 			/*
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
+
 
 			/*
 			 * writer: choi gowoon
@@ -590,6 +615,8 @@ public class Tetris extends JFrame implements ActionListener{
 			 */
 			itemManager.generateItem();
 			itemManager.manageBadItem();
+
+			board.checkLines();
 
 		}		
 	}
@@ -851,6 +878,18 @@ public class Tetris extends JFrame implements ActionListener{
 	 */
 	public void setReverseIndex(boolean reverseIndex) {
 		this.reverseIndex = reverseIndex;
+	}
+
+	public void setRotaionTimer(long rationTimer) {
+		this.rotaionTimer = rationTimer;
+	}
+
+	public void setScoreTimer(long scoreTimer) {
+		this.scoreTimer = scoreTimer;
+	}
+
+	public void setReverseTimer(long reverseTimer) {
+		this.reverseTimer = reverseTimer;
 	}
 
 	/**

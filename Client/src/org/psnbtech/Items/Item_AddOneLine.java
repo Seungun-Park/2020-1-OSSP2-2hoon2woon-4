@@ -5,11 +5,12 @@ public class Item_AddOneLine extends ItemType {
         super(x, y, itemManager);
         this.isBad = false;
         this.message = "Add One Line ...";
+        this.itemIndex = 1;
     }
 
-    // TODO
     @Override
     public void action() {
         itemManager.getBoard().addUnremovableLine();
     }
+
 }
