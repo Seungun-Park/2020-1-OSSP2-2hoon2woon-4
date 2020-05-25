@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import hoon2woon2.Client;
 import hoon2woon2.LoginFrame;
 import hoon2woon2.RankPanel;
+import org.psnbtech.Items.ItemManager;
 
 
 /**
@@ -39,12 +40,43 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The number of milliseconds per frame.
 	 */
 	private static final long FRAME_TIME = 1000L / 50L;
-	
+
+	/**
+	 * The index for game mode
+	 */
+	private int mode = 1;
+
+	/**
+	 * The Group of variables or instances for item mode
+	 */
+
+	/**
+	 * writer : choi-gowoon
+	 * The ItemManager instance
+	 */
+	private ItemManager itemManager;
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * 2020.05.16
+	 * boolean flag for items
+	 */
+	private boolean scoreIndex;
+	private long scoreTimer;
+
+	private boolean rotationIndex;
+	private long rotaionTimer;
+
+	private boolean reverseIndex;
+	private long reverseTimer;
+
+	private static int TIME_LIMIT = 30;
+
 	/**
 	 * The number of pieces that exist.
 	 */
-	private static final int TYPE_COUNT = TileType.values().length;
-		
+	private static final int TYPE_COUNT = TileType.values().length-2;
+
 	/**
 	 * The BoardPanel instance.
 	 */
@@ -107,7 +139,7 @@ public class Tetris extends JFrame implements ActionListener{
 	 */
 	private TileType nextType;
 
-	/*
+	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.04.26
 	 * The type of hold tile.
@@ -158,6 +190,8 @@ public class Tetris extends JFrame implements ActionListener{
 	private Dimension d_start;
 	private Dimension d_now;
 	
+	private int addTimer=1;
+	
 	/** 2020-04-28 Seungun-Park
 	 */
 	//program menu
@@ -168,6 +202,10 @@ public class Tetris extends JFrame implements ActionListener{
 	JMenu mn_account = new JMenu("Account");
 	JMenuItem item_login = new JMenuItem("Login");
 	JMenuItem item_logout = new JMenuItem("Logout");
+	JMenu mn_mode = new JMenu("Mode");
+	JMenuItem item_basic = new JMenuItem("Basic");
+	JMenuItem item_disturb = new JMenuItem("Interrupt");
+	JMenuItem item_item = new JMenuItem("Item");
 	//socket program
 	private Client client;
 	private static int user = -1;
@@ -212,14 +250,21 @@ public class Tetris extends JFrame implements ActionListener{
 		item_exit.addActionListener(this);
 		item_login.addActionListener(this);
 		item_logout.addActionListener(this);
+		item_basic.addActionListener(this);
+		item_disturb.addActionListener(this);
+		item_item.addActionListener(this);
 		
 		mn_file.add(item_new);
 		mn_file.add(item_exit);
 		mn_account.add(item_login);
 		mn_account.add(item_logout);
+		mn_mode.add(item_basic);
+		mn_mode.add(item_disturb);
+		mn_mode.add(item_item);
 		
 		menu.add(mn_file);
 		menu.add(mn_account);
+		menu.add(mn_mode);
 		
 		setJMenuBar(menu);
 		
@@ -257,40 +302,64 @@ public class Tetris extends JFrame implements ActionListener{
 						logicTimer.setCyclesPerSecond(25.0f);
 					}
 					break;
-					
+
 				/*
 				 * Move Left - When pressed, we check to see that the game is
 				 * not paused and that the position to the left of the current
 				 * position is valid. If so, we decrement the current column by 1.
 				 */
-				case KeyEvent.VK_LEFT:		
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
-						currentCol--;
+				/**
+				 * writer: choi gowoon
+				 * Move Left and Move Right
+				 * add flag for key reversing item
+				 */
+				case KeyEvent.VK_LEFT:
+					if(reverseIndex){
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol++;
+						}
 					}
-					
-					
+					else{
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol--;
+						}
+					}
 					break;
-					
+
 				/*
 				 * Move Right - When pressed, we check to see that the game is
 				 * not paused and that the position to the right of the current
 				 * position is valid. If so, we increment the current column by 1.
 				 */
 				case KeyEvent.VK_RIGHT:
-					if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
-						currentCol++;
+					if(reverseIndex){
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol--;
+						}
+					}
+					else{
+						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
+							currentCol++;
+						}
 					}
 					break;
-					
+
 				/*
 				 * Rotate Anticlockwise - When pressed, check to see that the game is not paused
 				 * and then attempt to rotate the piece anticlockwise. Because of the size and
 				 * complexity of the rotation code, as well as it's similarity to clockwise
 				 * rotation, the code for rotating the piece is handled in another method.
 				 */
+				/**
+				 * writer: choi gowoon
+				 * Rotate Anticlockwise and clockwise
+				 * add flag for key nonRotation item
+				 */
 				case KeyEvent.VK_Z:
-					if(!isPaused) {
-						rotatePiece((currentRotation == 0) ? 3 : currentRotation - 1);
+					if(rotationIndex){
+						if(!isPaused) {
+							rotatePiece((currentRotation == 0) ? 3 : currentRotation - 1);
+						}
 					}
 					break;
 				
@@ -301,8 +370,10 @@ public class Tetris extends JFrame implements ActionListener{
 				 * rotation, the code for rotating the piece is handled in another method.
 				 */
 				case KeyEvent.VK_X:
-					if(!isPaused) {
-						rotatePiece((currentRotation == 3) ? 0 : currentRotation + 1);
+					if(rotationIndex){
+						if(!isPaused) {
+							rotatePiece((currentRotation == 3) ? 0 : currentRotation + 1);
+						}
 					}
 					break;
 					
@@ -335,19 +406,8 @@ public class Tetris extends JFrame implements ActionListener{
 				 * 2020.04.26
 				 * hold function
 				 */
-				case KeyEvent.VK_C:
-					if(!isPaused && isHoldable) {
-						TileType temp = currentType;
-						if(holdType == null){
-							currentType = getNextPieceType();
-							nextType = TileType.values()[nextTetromino()];
-						}
-						else{
-							currentType = holdType;
-						}
-						holdType = temp;
-						isHoldable = false;
-					}
+				case KeyEvent.VK_SHIFT:
+					holdTile();
 					break;
 				
 				/*
@@ -357,6 +417,7 @@ public class Tetris extends JFrame implements ActionListener{
 				 */
 				case KeyEvent.VK_SPACE:
 					isHardDrop=true;
+					addTimer = 0;
 					int cnt=0;
 					while(board.isValidAndEmpty(currentType, currentCol, currentRow+cnt, currentRotation)) {
 						cnt++;
@@ -399,6 +460,28 @@ public class Tetris extends JFrame implements ActionListener{
 		setVisible(true);
 		board.setVisible(true);
 	}
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * hold function
+	 */
+	public void holdTile(){
+		if(!isPaused && isHoldable) {
+			TileType temp = currentType;
+			if(holdType == null){
+				currentType = getNextPieceType();
+				nextType = TileType.values()[nextTetromino()];
+			}
+			else{
+				currentType = holdType;
+			}
+			currentCol = currentType.getSpawnColumn();
+			currentRow = currentType.getSpawnRow();
+			currentRotation = 0;
+			holdType = temp;
+			isHoldable = false;
+		}
+	}
 	
 	/**
 	 * Starts the game running. Initializes everything and enters the game loop.
@@ -410,6 +493,11 @@ public class Tetris extends JFrame implements ActionListener{
 		this.random = new Random();
 		this.isNewGame = true;
 		this.gameSpeed = 1.0f;
+		this.itemManager = new ItemManager(this, board);
+		this.board.clear();
+		scoreIndex = false;
+		rotationIndex = true;
+		reverseIndex = false;
 		
 		/*
 		 * Setup the timer to keep the game from running before the user presses enter
@@ -441,10 +529,35 @@ public class Tetris extends JFrame implements ActionListener{
 			if(dropCooldown > 0) {
 				dropCooldown--;
 			}
-			
+
+
+			/**
+			 * writer : gowoon-choi
+			 * The code for item mode in startGame
+			 */
+			if(mode == 1){
+				if(!rotationIndex){
+					if(System.currentTimeMillis() - rotaionTimer >= TIME_LIMIT*1000){
+						rotationIndex = true;
+					}
+				}
+
+				if(scoreIndex){
+					if(System.currentTimeMillis() - scoreTimer >= TIME_LIMIT*1000){
+						scoreIndex = false;
+					}
+				}
+
+				if(reverseIndex){
+					if(System.currentTimeMillis() - reverseTimer >= TIME_LIMIT*1000){
+						reverseIndex = false;
+					}
+				}
+			}
+
 			//Display the window to the user.
 			renderGame();
-			
+
 			/*
 			 * Sleep to cap the framerate.
 			 */
@@ -466,19 +579,19 @@ public class Tetris extends JFrame implements ActionListener{
 		/*
 		 * Check to see if the piece's position can move down to the next row.
 		 */
-			
+
 		if(board.isValidAndEmpty(currentType, currentCol, currentRow + 1, currentRotation)) {
 			//Increment the current row if it's safe to do so.
 			currentRow++;
 		} 
 		
-		else {
+		else if(addTimer == 0){
 			/*
 			 * We've either reached the bottom of the board, or landed on another piece, so
 			 * we need to add the piece to the board.
 			 */
 			board.addPiece(currentType, currentCol, currentRow, currentRotation);
-			
+
 			/*
 			 * Check to see if adding the new piece resulted in any cleared lines. If so,
 			 * increase the player's score. (Up to 4 lines can be cleared in a single go;
@@ -486,14 +599,24 @@ public class Tetris extends JFrame implements ActionListener{
 			 */
 			int cleared = board.checkLines();
 			if(cleared > 0) {
-				score += 50 << cleared;
+				if(scoreIndex){
+					score += (50 << cleared)*2;
+				}
+				else{
+					score += 50 << cleared;
+				}
 			}
 			
 			/*
 			 * Increase the speed slightly for the next piece and update the game's timer
 			 * to reflect the increase.
 			 */
-			gameSpeed += 0.035f;
+			if (level < 5) {
+				gameSpeed += 0.1f;
+			}
+			else {
+				gameSpeed += 0.035f;
+			}
 			logicTimer.setCyclesPerSecond(gameSpeed);
 			logicTimer.reset();
 			
@@ -509,13 +632,42 @@ public class Tetris extends JFrame implements ActionListener{
 			 * used in the "Level" string in the SidePanel.
 			 */
 			level = (int)(gameSpeed * 1.70f);
-			
+
 			/*
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
+
+		
+			switch(mode) {
+				/**
+				 * the code for item mode in update
+				 * writer: choi gowoon
+				 * item action
+				 */
+			case 1:
+				itemManager.generateItem();
+				itemManager.manageBadItem();
+
+				board.checkLines();
+				break;
 			
-		}		
+			/**
+			 * Updates the game and handles the bulk of it's logic.
+			 * fixed by cha seung hoon on 2020.05.19
+			 * because of adding interrupt block
+			 */
+			case 2:
+				if(cleared>0)
+					makeInterrupt();
+				break;
+			}
+			
+			addTimer = 2;
+		}
+		else {
+			addTimer--;
+		}
 	}
 	
 	/**
@@ -547,6 +699,7 @@ public class Tetris extends JFrame implements ActionListener{
 		this.nextType = TileType.values()[nextTetromino()];
 		this.holdType = null;
 		this.isHoldable = true;
+		itemManager.clear();
 		board.clear();
 		logicTimer.reset();
 		logicTimer.setCyclesPerSecond(gameSpeed);
@@ -583,6 +736,7 @@ public class Tetris extends JFrame implements ActionListener{
 		 * Poll the last piece and reset our position and rotation to
 		 * their default variables, then pick the next piece to use.
 		 */
+
 		this.currentType = nextType;
 		this.currentCol = currentType.getSpawnColumn();
 		this.currentRow = currentType.getSpawnRow();
@@ -710,7 +864,7 @@ public class Tetris extends JFrame implements ActionListener{
 		return nextType;
 	}
 
-	/*
+	/**
 	 * writer : github.com/choi-gowoon
 	 * 2020.04.26
 	 * Gets the hold type of piece we're using.
@@ -743,7 +897,76 @@ public class Tetris extends JFrame implements ActionListener{
 	public int getPieceRotation() {
 		return currentRotation;
 	}
+
+	/**
+	 * writer : choi gowoon
+	 * Gets the itemManager
+	 * @return The itemManager.
+	 */
+	public ItemManager getItemManager() { return itemManager; }
+
+	/**
+	 * writer : choi gowoon
+	 * Sets the scoreIndex
+	 */
+	public void setScoreIndex(boolean scoreIndex) {
+		this.scoreIndex = scoreIndex;
+	}
+
+	/**
+	 * writer : choi gowoon
+	 * Sets the rotationIndex
+	 */
+	public void setRotationIndex(boolean rotationIndex) {
+		this.rotationIndex = rotationIndex;
+	}
+
+	/**
+	 * writer : choi gowoon
+	 * Sets the reverseIndex
+	 */
+	public void setReverseIndex(boolean reverseIndex) {
+		this.reverseIndex = reverseIndex;
+	}
+
+	public void setRotaionTimer(long rationTimer) {
+		this.rotaionTimer = rationTimer;
+	}
+
+	public void setScoreTimer(long scoreTimer) {
+		this.scoreTimer = scoreTimer;
+	}
+
+	public void setReverseTimer(long reverseTimer) {
+		this.reverseTimer = reverseTimer;
+	}
 	
+	public int getMode() {
+		return this.mode;
+	}
+	
+	/**
+	 * writer : cha seung hoon
+	 * 2020.05.19
+	 * creating interrupt block
+	 */
+	public void makeInterrupt() {
+		int randCol;
+		int randRow;
+		int randRot;
+
+		while(true) {
+			randCol=5+random.nextInt(10);
+			randRow=random.nextInt(10);
+			randRot=random.nextInt(1);
+
+			if(board.isValidAndEmpty(currentType, randCol, randRow, randRot))
+				break;
+		}
+
+		board.addPiece(currentType, randCol, randRow, randRot);
+	}
+
 	/**
 	 * 2020-04-28 Seungun-Park
 	 * menu action listener
@@ -781,6 +1004,24 @@ public class Tetris extends JFrame implements ActionListener{
 				user = -1;
 				userid = "";
 			}
+		}
+		if(event.getSource() == item_basic) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 0;
+		}
+		if(event.getSource() == item_disturb) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 2;
+		}
+		if(event.getSource() == item_item) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 1;
 		}
 	}
 }

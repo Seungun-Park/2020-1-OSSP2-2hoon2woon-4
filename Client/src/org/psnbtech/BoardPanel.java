@@ -1,9 +1,12 @@
 package org.psnbtech;
 
+import org.psnbtech.Items.ItemManager;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -45,7 +48,7 @@ public class BoardPanel extends JPanel {
 	/**
 	 * The number of visible rows on the board.
 	 */
-	private static final int VISIBLE_ROW_COUNT = 20;
+	public static final int VISIBLE_ROW_COUNT = 20;
 	
 	/**
 	 * The number of rows that are hidden from view.
@@ -101,6 +104,8 @@ public class BoardPanel extends JPanel {
 	 * The Tetris instance.
 	 */
 	private Tetris tetris;
+
+	private ItemManager itemManager;
 
 	/**
 	 * The tiles that make up the board.
@@ -186,7 +191,7 @@ public class BoardPanel extends JPanel {
 		 */
 		for(int col = 0; col < type.getDimension(); col++) {
 			for(int row = 0; row < type.getDimension(); row++) {
-				if(type.isTile(col, row, rotation) && isOccupied(x + col, y + row)) {
+				if(type.isTile(col, row, rotation) == 1 && isOccupied(x + col, y + row)) {
 					return false;
 				}
 			}
@@ -210,7 +215,7 @@ public class BoardPanel extends JPanel {
 		 */
 		for(int col = 0; col < type.getDimension(); col++) {
 			for(int row = 0; row < type.getDimension(); row++) {
-				if(type.isTile(col, row, rotation)) {
+				if(type.isTile(col, row, rotation) == 1) {
 					setTile(col + x, row + y, type);
 				}
 			}
@@ -252,18 +257,30 @@ public class BoardPanel extends JPanel {
 		 * empty, then the row is not full.
 		 */
 		for(int col = 0; col < COL_COUNT; col++) {
+			if(tiles[line][col] == TileType.UnremovableLine){
+				return false;
+			}
 			if(!isOccupied(col, line)) {
 				return false;
 			}
 		}
-		
+
 		/*
 		 * Since the line is filled, we need to 'remove' it from the game.
 		 * To do this, we simply shift every row above it down by one.
 		 */
+
 		for(int row = line - 1; row >= 0; row--) {
 			for(int col = 0; col < COL_COUNT; col++) {
 				setTile(col, row + 1, getTile(col, row));
+			}
+		}
+
+		itemManager.deleteItem(line);
+
+		for(int i=0; i<itemManager.getItems().size(); i++){
+			if(itemManager.getItems().get(i).getY() < line){
+				itemManager.getItems().get(i).setY(itemManager.getItems().get(i).getY()+1);
 			}
 		}
 		return true;
@@ -296,7 +313,7 @@ public class BoardPanel extends JPanel {
 	 * @param y The row.
 	 * @return The tile.
 	 */
-	private TileType getTile(int x, int y) {
+	public TileType getTile(int x, int y) {
 		return tiles[y][x];
 	}
 	
@@ -325,6 +342,7 @@ public class BoardPanel extends JPanel {
 			 * the messages that are displayed.
 			 */
 			String msg = tetris.isNewGame() ? "TETRIS" : "GAME OVER";
+			if(tetris.isGameOver()) itemManager.clear();
 			g.drawString(msg, CENTER_X - g.getFontMetrics().stringWidth(msg) / 2, 150);
 			g.setFont(SMALL_FONT);
 			msg = "Press Enter to Play" + (tetris.isNewGame() ? "" : " Again");
@@ -342,7 +360,8 @@ public class BoardPanel extends JPanel {
 					}
 				}
 			}
-			
+
+
 			/*
 			 * Draw the current piece. This cannot be drawn like the rest of the
 			 * pieces because it's still not part of the game board. If it were
@@ -353,11 +372,11 @@ public class BoardPanel extends JPanel {
 			int pieceCol = tetris.getPieceCol();
 			int pieceRow = tetris.getPieceRow();
 			int rotation = tetris.getPieceRotation();
-			
+
 			//Draw the piece onto the board.
 			for(int col = 0; col < type.getDimension(); col++) {
 				for(int row = 0; row < type.getDimension(); row++) {
-					if(pieceRow + row >= 2 && type.isTile(col, row, rotation)) {
+					if(pieceRow + row >= 2 && type.isTile(col, row, rotation) == 1) {
 						drawTile(type, (pieceCol + col) * TILE_SIZE, (pieceRow + row - HIDDEN_ROW_COUNT) * TILE_SIZE, g);
 					}
 				}
@@ -382,7 +401,7 @@ public class BoardPanel extends JPanel {
 				//Draw the ghost piece.
 				for(int col = 0; col < type.getDimension(); col++) {
 					for(int row = 0; row < type.getDimension(); row++) {
-						if(lowest + row >= 2 && type.isTile(col, row, rotation)) {
+						if(lowest + row >= 2 && type.isTile(col, row, rotation) == 1) {
 							drawTile(base, base.brighter(), base.darker(), (pieceCol + col) * TILE_SIZE, (lowest + row - HIDDEN_ROW_COUNT) * TILE_SIZE, g);
 						}
 					}
@@ -402,6 +421,12 @@ public class BoardPanel extends JPanel {
 					g.drawLine(x * TILE_SIZE, 0, x * TILE_SIZE, VISIBLE_ROW_COUNT * TILE_SIZE);
 				}
 			}
+
+		}
+
+		itemManager = tetris.getItemManager();
+		for(int i=0; i<itemManager.getItems().size(); i++){
+			drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE + TILE_SIZE/4,(itemManager.getItems().get(i).getY()-HIDDEN_ROW_COUNT)*TILE_SIZE + TILE_SIZE/2,itemManager.getItems().get(i).getItemIndex(),g);
 		}
 		
 		/*
@@ -457,6 +482,49 @@ public class BoardPanel extends JPanel {
 			g.drawLine(x + i, y, x + i, y + TILE_SIZE - i - 1);
 		}
 	}
+
+
+	//TODO comment
+	public void drawItem(int x, int y, int num, Graphics g){
+		g.setColor(Color.white);
+		g.drawString(Integer.toString(num),x, y);
+	}
+
+	public void addUnremovableLine(){
+		for(int row = 1; row < ROW_COUNT; row++) {
+			for(int col = 0; col < COL_COUNT; col++) {
+				setTile(col, row - 1, getTile(col, row));
+			}
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[ROW_COUNT-1][col] = TileType.values()[7];
+		}
+	}
+
+	public void removeUnremovableLine(){
+		int row;
+		for(row = ROW_COUNT-1; row >= 0; row--){
+			if(getTile(0,row) != TileType.UnremovableLine) break;
+		}
+		if(row != ROW_COUNT - 1){
+			for(int col=0; col<COL_COUNT; col++){
+				tiles[row+1][col] = TileType.values()[8];
+			}
+		}
+	}
+
+	public void removeLine(){
+		int row;
+		for(row = ROW_COUNT-1; row >= 0; row--){
+			if(getTile(0,row) != TileType.UnremovableLine) break;
+		}
+
+		for(int col=0; col<COL_COUNT; col++){
+			tiles[row][col] = TileType.values()[8];
+		}
+	}
+
 
 		public Dimension getDim() {
 			return d_start;
