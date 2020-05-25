@@ -40,22 +40,47 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The number of milliseconds per frame.
 	 */
 	private static final long FRAME_TIME = 1000L / 50L;
-	
+
 	/**
-	 * The number of pieces that exist.
+	 * The index for game mode
 	 */
-	private static final int TYPE_COUNT = TileType.values().length-2;
-		
+	private int mode = 0;
+
 	/**
-	 * The BoardPanel instance.
+	 * The Group of variables or instances for item mode
 	 */
-	private BoardPanel board;
 
 	/**
 	 * writer : choi-gowoon
 	 * The ItemManager instance
 	 */
 	private ItemManager itemManager;
+
+	/**
+	 * writer : github.com/choi-gowoon
+	 * 2020.05.16
+	 * boolean flag for items
+	 */
+	private boolean scoreIndex;
+	private long scoreTimer;
+
+	private boolean rotationIndex;
+	private long rotaionTimer;
+
+	private boolean reverseIndex;
+	private long reverseTimer;
+
+	private static int TIME_LIMIT = 30;
+
+	/**
+	 * The number of pieces that exist.
+	 */
+	private static final int TYPE_COUNT = TileType.values().length-2;
+
+	/**
+	 * The BoardPanel instance.
+	 */
+	private BoardPanel board;
 	
 	/**
 	 * The SidePanel instance.
@@ -92,22 +117,6 @@ public class Tetris extends JFrame implements ActionListener{
 	 * The current score.
 	 */
 	private int score;
-
-	/**
-	 * writer : github.com/choi-gowoon
-	 * 2020.05.16
-	 * boolean flag for items
-	 */
-	private boolean scoreIndex;
-	private long scoreTimer;
-
-	private boolean rotationIndex;
-	private long rotaionTimer;
-
-	private boolean reverseIndex;
-	private long reverseTimer;
-
-	private static int TIME_LIMIT = 30;
 	
 	/**
 	 * The random number generator. This is used to
@@ -507,21 +516,28 @@ public class Tetris extends JFrame implements ActionListener{
 				dropCooldown--;
 			}
 
-			if(!rotationIndex){
-				if(System.currentTimeMillis() - rotaionTimer >= TIME_LIMIT*1000){
-					rotationIndex = true;
-				}
-			}
 
-			if(scoreIndex){
-				if(System.currentTimeMillis() - scoreTimer >= TIME_LIMIT*1000){
-					scoreIndex = false;
+			/**
+			 * writer : gowoon-choi
+			 * The code for item mode in startGame
+			 */
+			if(mode == 1){
+				if(!rotationIndex){
+					if(System.currentTimeMillis() - rotaionTimer >= TIME_LIMIT*1000){
+						rotationIndex = true;
+					}
 				}
-			}
 
-			if(reverseIndex){
-				if(System.currentTimeMillis() - reverseTimer >= TIME_LIMIT*1000){
-					reverseIndex = false;
+				if(scoreIndex){
+					if(System.currentTimeMillis() - scoreTimer >= TIME_LIMIT*1000){
+						scoreIndex = false;
+					}
+				}
+
+				if(reverseIndex){
+					if(System.currentTimeMillis() - reverseTimer >= TIME_LIMIT*1000){
+						reverseIndex = false;
+					}
 				}
 			}
 
@@ -609,15 +625,18 @@ public class Tetris extends JFrame implements ActionListener{
 			spawnPiece();
 
 
-			/*
+
+			/**
+			 * the code for item mode in update
 			 * writer: choi gowoon
 			 * item action
 			 */
-			itemManager.generateItem();
-			itemManager.manageBadItem();
+			if(mode == 1){
+				itemManager.generateItem();
+				itemManager.manageBadItem();
 
-			board.checkLines();
-
+				board.checkLines();
+			}
 		}		
 	}
 	

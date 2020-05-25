@@ -269,6 +269,7 @@ public class BoardPanel extends JPanel {
 		 * Since the line is filled, we need to 'remove' it from the game.
 		 * To do this, we simply shift every row above it down by one.
 		 */
+
 		for(int row = line - 1; row >= 0; row--) {
 			for(int col = 0; col < COL_COUNT; col++) {
 				setTile(col, row + 1, getTile(col, row));
