@@ -44,7 +44,7 @@ public class Tetris extends JFrame implements ActionListener{
 	/**
 	 * The index for game mode
 	 */
-	private int mode = 0;
+	private int mode = 1;
 
 	/**
 	 * The Group of variables or instances for item mode
