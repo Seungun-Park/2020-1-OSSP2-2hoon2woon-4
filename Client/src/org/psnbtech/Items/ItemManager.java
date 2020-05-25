@@ -2,13 +2,14 @@ package org.psnbtech.Items;
 
 import org.psnbtech.BoardPanel;
 import org.psnbtech.Tetris;
+import org.psnbtech.TileType;
 
 import java.util.Random;
 import java.util.Vector;
 
 public class ItemManager {
     private static int ITEM_NUM = 6;
-    private Vector<ItemType> items = new Vector<>();
+    private Vector<ItemType> items;
     private int itemTerm;
     private Tetris tetris;
     private BoardPanel board;
@@ -17,6 +18,7 @@ public class ItemManager {
         this.itemTerm = 0;
         this.tetris = tetris;
         this.board = board;
+        items = new Vector<>();
     }
 
     public Vector<ItemType> getItems() {
@@ -41,13 +43,14 @@ public class ItemManager {
             this.y = y;
         }
     }
-    // TODO ! using board;
+
     public Point itemLocation(){
         Point location = new Point();
         Vector<Point> list = new Vector<>();
         for(int row = 0; row < board.ROW_COUNT; row++){
             for(int col = 0; col < board.COL_COUNT; col++){
-                if(board.getTile(col, row)!=null){
+                // TODO 이미 아이템이 있는 위치면 add하지 않아야 함 !
+                if(board.getTile(col, row)!= null && board.getTile(col, row) != TileType.UnremovableLine){
                     list.add(new Point(col, row));
                 }
             }
@@ -64,25 +67,25 @@ public class ItemManager {
             itemTerm = 0;
             Point location = itemLocation();
             Random random = new Random();
-            int index = random.nextInt(ITEM_NUM-1) + 1;
+            int index = random.nextInt(ITEM_NUM) + 1;
             switch (index){
                 case 1:
                     items.add(new Item_AddOneLine(location.x,location.y, this));
                     break;
                 case 2:
-                    items.add(new Item_DeleteAllBlocks(location.x,location.y, this));
-                    break;
-                case 3:
-                    items.add(new Item_DeleteSomeLine(location.x,location.y, this));
-                    break;
-                case 4:
                     items.add(new Item_DisableRotate(location.x,location.y, this));
                     break;
+                case 3:
+                    items.add(new Item_ReverseKey(location.x,location.y,this));
+                    break;
+                case 4:
+                    items.add(new Item_DeleteAllBlocks(location.x,location.y, this));
+                    break;
                 case 5:
-                    items.add(new Item_DoubleScore(location.x,location.y, this));
+                    items.add(new Item_DeleteSomeLine(location.x,location.y, this));
                     break;
                 case 6:
-                    items.add(new Item_ReverseKey(location.x,location.y,this));
+                    items.add(new Item_DoubleScore(location.x,location.y, this));
                     break;
             }
         }
@@ -94,8 +97,13 @@ public class ItemManager {
     public void deleteItem(int row){
         for(int i=0; i<items.size(); i++){
             if(items.get(i).y == row){
-                items.get(i).action();
-                items.remove(i);
+                if(items.get(i).itemIndex == 4){
+                    items.get(i).action();
+                }
+                else{
+                    items.get(i).action();
+                    items.remove(i);
+                }
             }
         }
     }
