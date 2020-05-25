@@ -503,7 +503,6 @@ public class BoardPanel extends JPanel {
 	}
 
 	public void removeUnremovableLine(){
-		System.out.println("Remove Unremovable Line");
 		int row;
 		for(row = ROW_COUNT-1; row >= 0; row--){
 			if(getTile(0,row) != TileType.UnremovableLine) break;
@@ -516,7 +515,6 @@ public class BoardPanel extends JPanel {
 	}
 
 	public void removeLine(){
-		System.out.println("Remove Removable Line");
 		int row;
 		for(row = ROW_COUNT-1; row >= 0; row--){
 			if(getTile(0,row) != TileType.UnremovableLine) break;
