@@ -6,12 +6,21 @@ import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.psnbtech.BoardPanel;
 import org.psnbtech.Tetris;
@@ -77,8 +86,14 @@ public class RankPanel extends JPanel{
 	 * The color to draw the text and preview box in.
 	 */
 	private static final Color DRAW_COLOR = new Color(128, 192, 128);
-	
 	private int high_score;
+	
+	/**
+	 * Encryption
+	 */
+	private static final String encryptionKey = "2hoon2woontetris";
+	private Cipher cipher;
+	private SecretKeySpec secretKeySpec;
 	
 	/**
 	 * The Tetris instance
@@ -89,19 +104,28 @@ public class RankPanel extends JPanel{
 	 * score save & load
 	 */
 	private static final File file = new File("Bscore");
-	private static BufferedWriter writer;
 	
 	private static Dimension d_start;
 	
 	public RankPanel(Tetris tetris) {
 		this.tetris = tetris;
 		try {
-			FileReader filereader = new FileReader(file);
-			BufferedReader bufreader = new BufferedReader(filereader);
+			FileInputStream fileInputStream = new FileInputStream(file);
+			BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+			
+			byte[] encr = new byte[16];
+			for(int i = 0; i<16; i++) {
+				bufferedInputStream.read(encr);
+			}
+			
+			cipher = Cipher.getInstance("AES");
+			secretKeySpec = new SecretKeySpec(encryptionKey.getBytes(), "AES");
+			cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+			byte[] decryptBytes = cipher.doFinal(encr);
 				
-			high_score = Integer.parseInt(bufreader.readLine());
-			bufreader.close();
-		} catch(IOException e) {
+			high_score = Integer.parseInt(new String(decryptBytes, "UTF-8"));
+			bufferedInputStream.read(encr);
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -132,11 +156,15 @@ public class RankPanel extends JPanel{
 	}
 	
 	public void uploadScore() {
-		try {
-			writer = new BufferedWriter(new FileWriter(file));
-			writer.write(Integer.toString(high_score));
+		try {			
+			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+			
+			byte[] encryptBytes = cipher.doFinal(Integer.toString(high_score).getBytes("UTF-8"));
+			
+			FileOutputStream writer = new FileOutputStream(file);
+			writer.write(encryptBytes);
 			writer.close();
-		} catch(IOException e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
