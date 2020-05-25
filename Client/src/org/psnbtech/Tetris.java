@@ -406,7 +406,7 @@ public class Tetris extends JFrame implements ActionListener{
 				 * 2020.04.26
 				 * hold function
 				 */
-				case KeyEvent.VK_SHIFT:
+				case KeyEvent.VK_C:
 					holdTile();
 					break;
 				
@@ -637,7 +637,6 @@ public class Tetris extends JFrame implements ActionListener{
 			 * Spawn a new piece to control.
 			 */
 			spawnPiece();
-
 		
 			switch(mode) {
 				/**
@@ -944,7 +943,6 @@ public class Tetris extends JFrame implements ActionListener{
 	public int getMode() {
 		return this.mode;
 	}
-	
 	/**
 	 * writer : cha seung hoon
 	 * 2020.05.19
