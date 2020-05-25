@@ -86,6 +86,7 @@ public class RankPanel extends JPanel{
 	 * The color to draw the text and preview box in.
 	 */
 	private static final Color DRAW_COLOR = new Color(128, 192, 128);
+	//private int[] high_score;//0:basic 1:item 2:interrupt
 	private int high_score;
 	
 	/**
@@ -109,6 +110,7 @@ public class RankPanel extends JPanel{
 	
 	public RankPanel(Tetris tetris) {
 		this.tetris = tetris;
+		//high_score = new int[3];
 		try {
 			FileInputStream fileInputStream = new FileInputStream(file);
 			BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
@@ -125,6 +127,8 @@ public class RankPanel extends JPanel{
 				
 			high_score = Integer.parseInt(new String(decryptBytes, "UTF-8"));
 			bufferedInputStream.read(encr);
+			
+			bufferedInputStream.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
