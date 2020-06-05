@@ -276,12 +276,17 @@ public class BoardPanel extends JPanel {
 			}
 		}
 
-		itemManager.deleteItem(line);
+		if(tiles[line][0] != TileType.RemovableLine ){
+			itemManager.actionItem(line);
 
-		for(int i=0; i<itemManager.getItems().size(); i++){
-			if(itemManager.getItems().get(i).getY() < line){
-				itemManager.getItems().get(i).setY(itemManager.getItems().get(i).getY()+1);
+			for(int i=0; i<itemManager.getItems().size(); i++){
+				if(itemManager.getItems().get(i).getY() < line){
+					itemManager.getItems().get(i).setY(itemManager.getItems().get(i).getY()+1);
+				}
 			}
+		}
+		else{
+			itemManager.deleteItem(line);
 		}
 		return true;
 	}
@@ -422,12 +427,12 @@ public class BoardPanel extends JPanel {
 				}
 			}
 
+			itemManager = tetris.getItemManager();
+			for(int i=0; i<itemManager.getItems().size(); i++){
+				drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE + TILE_SIZE/4,(itemManager.getItems().get(i).getY()-HIDDEN_ROW_COUNT)*TILE_SIZE + TILE_SIZE/2,itemManager.getItems().get(i).getItemIndex(),g);
+			}
 		}
 
-		itemManager = tetris.getItemManager();
-		for(int i=0; i<itemManager.getItems().size(); i++){
-			drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE + TILE_SIZE/4,(itemManager.getItems().get(i).getY()-HIDDEN_ROW_COUNT)*TILE_SIZE + TILE_SIZE/2,itemManager.getItems().get(i).getItemIndex(),g);
-		}
 		
 		/*
 		 * Draw the outline.
@@ -496,6 +501,8 @@ public class BoardPanel extends JPanel {
 				setTile(col, row - 1, getTile(col, row));
 			}
 		}
+
+		itemManager.replaceItem(1);
 
 		for(int col=0; col<COL_COUNT; col++){
 			tiles[ROW_COUNT-1][col] = TileType.values()[7];
