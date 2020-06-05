@@ -699,6 +699,9 @@ public class Tetris extends JFrame implements ActionListener{
 		this.holdType = null;
 		this.isHoldable = true;
 		itemManager.clear();
+		scoreIndex = false;
+		rotationIndex = true;
+		reverseIndex = false;
 		board.clear();
 		logicTimer.reset();
 		logicTimer.setCyclesPerSecond(gameSpeed);
