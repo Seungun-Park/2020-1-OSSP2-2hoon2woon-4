@@ -33,9 +33,9 @@ public class Client {
 	
 	public Client(){
 		try {
+			System.out.println(System.getProperty("user.dir"));
 			socket = new Socket();
 			prop.load(new FileInputStream(inipath));
-			
 			connect();
 		} catch(IOException e) {
 			e.printStackTrace();
