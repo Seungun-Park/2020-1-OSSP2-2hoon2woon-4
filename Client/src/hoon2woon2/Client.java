@@ -36,11 +36,11 @@ public class Client {
 	
 	public Client(){
 		try {
+			System.out.println(System.getProperty("user.dir"));
 			socket = new Socket();
-			System.out.println(getP);
-			System.out.println(inipath);
-			prop.load(new FileInputStream(getP+"\\"+inipath));
-			System.out.println(inipath);
+
+			prop.load(new FileInputStream(inipath));
+
 			connect();
 		} catch(IOException e) {
 			e.printStackTrace();
