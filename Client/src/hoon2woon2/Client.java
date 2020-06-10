@@ -27,6 +27,9 @@ public class Client {
 	static byte[] buf;
 	static final String inipath = "server.properties";
 	
+	private static int user = -1;
+	private static String userid = "";
+	
 	Properties prop = new Properties();
 	
 	public Client(){
@@ -80,12 +83,48 @@ public class Client {
 			
 			buf = new byte[256];
 			is.read(buf);
-			System.out.println(new String(buf));
+			if(new String(buf).substring(0,13).equals("login success"))
+			{
+				user = 1;
+				userid = id;
+			}
+			else
+			{
+				return false;
+			}
+			
+			return true;
 		} catch(IOException e) {
 			e.printStackTrace();
 		} catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+		return false;
+	}
+	
+	public boolean regist(String id, char[] pw) {
+		try {
+			if(!socket.isConnected()) return false;
+			send("register");
+			send(id);
+			buf = new byte[256];
+			is.read(buf);
+			
+			MessageDigest sh = MessageDigest.getInstance("SHA-256");
+			sh.reset();
+			sh.update((new String(pw)).getBytes("UTF-8"));
+			os.write(sh.digest());
+			os.flush();
+			
+			buf = new byte[256];
+			is.read(buf);
+			System.out.println(new String(buf));
+			
+			return true;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 	
@@ -100,5 +139,28 @@ public class Client {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public String receive() {
+		try {
+			if(!socket.isConnected()) return "";
+			buf = new byte[256];
+			is.read(buf);
+			return (new String(buf));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
+	public boolean isLogined() {
+		if(user == -1) return false;
+		else return true;
+	}
+	
+	public boolean logout() {
+		user = -1;
+		userid = "";
+		return true;
 	}
 }
