@@ -25,6 +25,7 @@ public class Client {
 	static InputStream is;
 	static byte[] buf;
 	static final String inipath = "server.properties";
+
 	
 	private static int user = -1;
 	private static String userid = "";
@@ -35,7 +36,6 @@ public class Client {
 		try {
 			socket = new Socket();
 			prop.load(new FileInputStream(inipath));
-			
 			connect();
 		} catch(IOException e) {
 			e.printStackTrace();
