@@ -1,4 +1,4 @@
-package org.psnbtech.Items;
+package hoon2woon2.Items;
 
 public class Item_DisableRotate extends ItemType {
     Item_DisableRotate(int x, int y, ItemManager itemManager) {
