@@ -19,8 +19,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Client {
 
-	// �엫�떆濡�..�삷寃⑤넃�쓬..! gowoon-choi
-	private static String userid = "";
+	// 占쎌뿫占쎈뻻嚥∽옙..占쎌궥野꺿뫀�꼦占쎌벉..! gowoon-choi
 
 	private static final long serialVersionUID = -3752491464582754341L;
 	
@@ -103,11 +102,8 @@ public class Client {
 		}
 		return false;
 	}
-<<<<<<< HEAD
-	public boolean register(String id, char [] pw) {	//cha-seung-hoon 2020.06.10 
-=======
 
-	public boolean register(String id, char [] pw) {   //chacha
+	public boolean register(String id, char [] pw) {   //cha seung hoon_for Register Frame
 		try {
 		   if(!socket.isConnected()) return false;
 		   send("register");
@@ -130,48 +126,6 @@ public class Client {
 		   e.printStackTrace();
 		}return false;
 	 }
-	
-	public boolean regist(String id, char[] pw) {
->>>>>>> upstream/master
-		try {
-			if(!socket.isConnected()) return false;
-			send("register");
-			send(id);
-			buf = new byte[256];
-			is.read(buf);
-			
-			MessageDigest sh = MessageDigest.getInstance("SHA-256");
-			sh.reset();
-			sh.update((new String(pw)).getBytes("UTF-8"));
-			os.write(sh.digest());
-			os.flush();
-			
-			buf = new byte[256];
-			is.read(buf);
-<<<<<<< HEAD
-			System.out.println(new String(buf));
-		} catch(IOException e) {
-			e.printStackTrace();
-		} catch(NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}return false;
-=======
-			
-			if(new String(buf).substring(0,16).equals("register success"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return false;
->>>>>>> upstream/master
-	}
 	
 	public boolean send(String message) {
 		try {

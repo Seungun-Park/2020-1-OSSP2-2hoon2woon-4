@@ -1069,13 +1069,11 @@ public class Tetris extends JFrame implements ActionListener{
 			mode = 1;
 		}
 		if(event.getSource()==item_register) { 	// cha seung hoon 2020.06.10 Register Frame
-			if(user == -1) {
 				if(!isGameOver && !isNewGame) {
 					isPaused = !isPaused;
 					logicTimer.setPaused(isPaused);
 				}
 			RegisterFrame r = new RegisterFrame(this,client);
-			}
 		}
 		if(event.getSource() == item_basic) {
 			isPaused = false;
