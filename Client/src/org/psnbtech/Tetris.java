@@ -1,13 +1,11 @@
 package org.psnbtech;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.security.cert.TrustAnchor;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -20,7 +18,7 @@ import java.util.ArrayList;
 import hoon2woon2.Client;
 import hoon2woon2.LoginFrame;
 import hoon2woon2.RankPanel;
-import org.psnbtech.Items.ItemManager;
+import hoon2woon2.Items.ItemManager;
 
 
 /**

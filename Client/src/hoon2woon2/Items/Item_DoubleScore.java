@@ -1,4 +1,4 @@
-package org.psnbtech.Items;
+package hoon2woon2.Items;
 
 public class Item_DoubleScore extends ItemType {
     Item_DoubleScore(int x, int y, ItemManager itemManager) {

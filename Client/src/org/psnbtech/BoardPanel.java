@@ -1,12 +1,11 @@
 package org.psnbtech;
 
-import org.psnbtech.Items.ItemManager;
+import hoon2woon2.Items.ItemManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -308,7 +307,7 @@ public class BoardPanel extends JPanel {
 	 * @param y The row.
 	 * @param type The value to set to the tile to.
 	 */
-	private void setTile(int  x, int y, TileType type) {
+	public void setTile(int  x, int y, TileType type) {
 		tiles[y][x] = type;
 	}
 		
