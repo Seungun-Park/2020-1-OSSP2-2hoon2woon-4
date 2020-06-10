@@ -6,27 +6,52 @@ import org.psnbtech.TileType;
 
 import java.util.HashMap;
 
+/**
+ * gowoon-choi
+ * TODO comment
+ */
 public class MultiPlay {
+    /**
+     * gowoon-choi
+     * TODO comment
+     */
     private static Client client;
     private static Tetris tetris;
     private static BoardPanel myBoard;
 
+    /**
+     * gowoon-choi
+     * TODO comment
+     */
     private int gamerCount;
     private BoardPanel[] gamersBoard = new BoardPanel[gamerCount];
     private HashMap<String, Integer> userId2boardIndex;
 
+    /**
+     * gowoon-choi
+     * TODO comment
+     */
     MultiPlay(Client c){
         this.client = c;
         this.tetris = new Tetris(client);
         this.myBoard = new BoardPanel(tetris);
     }
 
+    /**
+     * gowoon-choi
+     * TODO comment
+     */
     void start(){
         while(true){
-            
+
         }
     }
 
+
+    /**
+     * gowoon-choi
+     * TODO comment
+     */
     String Board2String(BoardPanel board){
         String boardInfo = "";
         String temp = "";
@@ -48,6 +73,10 @@ public class MultiPlay {
         return boardInfo;
     }
 
+    /**
+     * gowoon-choi
+     * TODO ! comment
+     */
     void String2Board(String boardInfo){
         BoardPanel board;
         String delimiter = "\\:";
