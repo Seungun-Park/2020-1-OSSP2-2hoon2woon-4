@@ -49,9 +49,10 @@ void ClientSocket::run()
 		{
 			break;
 		}
-		printf_s("%s\n", buf);
+		//printf_s("%s\n", buf);
 
-		if (strcmp("login", buf)==0) login();
+		if (strcmp("login", buf) == 0) login();
+		else if (strcmp("register", buf) == 0) regist();
 	};
 	runable = false;
 }
@@ -64,8 +65,6 @@ char* ClientSocket::ip()
 
 bool ClientSocket::login()
 {
-	printf("login request\n");
-
 	std::fill(buf, buf + BUF_LEN, '\0');
 	readLen = recv(client_fd, buf, BUF_LEN, 0);
 	if (readLen < 1) return false;
@@ -79,15 +78,71 @@ bool ClientSocket::login()
 	for (char e : buf)
 		ss << std::hex << std::setw(2) << std::setfill('0') << (((int)e)&0x000000FF);
 	pw = ss.str();
-	std::cout << pw << std::endl;
-
 	if (sqlconnection != NULL)
 	{
-		std::string query = "insert into tetrisDB.users(userid, password, name, email, major, admin) VALUES ('"+userid+"','"+pw+"','a','a','a',0)";
+		std::string query = "select * from tetris.users where userid='"+userid+"'";
 		if(mysql_query(sqlconnection, query.c_str()))
 			printf("%d error: %s, %d\n", mysql_errno(&sqlconn), mysql_error(&sqlconn));
-	}
+		sql_result = mysql_store_result(sqlconnection);
+		if (mysql_num_rows(sql_result) != 0)
+		{
+			MYSQL_ROW row = mysql_fetch_row(sql_result);
+			if (strcmp(pw.c_str(), row[2]) == 0)
+			{
+				send(client_fd, "login success", 13, 0);
+				printf("login : %s\n", row[1]);
+				return true;
 
-	send(client_fd, "login request", 13, 0);
+			}
+			else
+			{
+				send(client_fd, "login failed", 12, 0);
+				return false;
+			}
+		}
+		else
+		{
+			send(client_fd, "login failed", 12, 0);
+			return false;
+		}
+	}
+	return false;
+}
+
+bool ClientSocket::regist()
+{
+	std::fill(buf, buf + BUF_LEN, '\0');
+	readLen = recv(client_fd, buf, BUF_LEN, 0);
+	if (readLen < 1) return false;
+	userid = buf;
+	send(client_fd, buf, readLen, 0);
+
+	std::fill(buf, buf + BUF_LEN, '\0');
+	readLen = recv(client_fd, buf, BUF_LEN, 0);
+	if (readLen < 1) return false;	
+	std::stringstream ss;
+	for (char e : buf)
+		ss << std::hex << std::setw(2) << std::setfill('0') << (((int)e)&0x000000FF);
+	pw = ss.str();
+	if (sqlconnection != NULL)
+	{
+		std::string query = "select * from tetris.users where userid='" + userid + "'";
+		if (mysql_query(sqlconnection, query.c_str()))
+			printf("%d error: %s, %d\n", mysql_errno(&sqlconn), mysql_error(&sqlconn));
+		sql_result = mysql_store_result(sqlconnection);
+		if (mysql_num_rows(sql_result) == 0)
+		{
+			std::string query = "insert into tetris.users(userid, password) VALUES ('" + userid + "','" + pw + "')";
+			if (mysql_query(sqlconnection, query.c_str()))
+				printf("%d error: %s, %d\n", mysql_errno(&sqlconn), mysql_error(&sqlconn));
+
+			printf("register : %s\n", userid);
+			send(client_fd, "register success", 16, 0);
+		}
+		else
+		{
+			send(client_fd, "register failed", 15, 0);
+		}
+	}
 	return false;
 }
