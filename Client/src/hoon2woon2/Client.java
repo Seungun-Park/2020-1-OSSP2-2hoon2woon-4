@@ -87,13 +87,12 @@ public class Client {
 			{
 				user = 1;
 				userid = id;
+				return true;
 			}
 			else
 			{
 				return false;
 			}
-			
-			return true;
 		} catch(IOException e) {
 			e.printStackTrace();
 		} catch(NoSuchAlgorithmException e) {
@@ -118,9 +117,15 @@ public class Client {
 			
 			buf = new byte[256];
 			is.read(buf);
-			System.out.println(new String(buf));
 			
-			return true;
+			if(new String(buf).substring(0,16).equals("register success"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
