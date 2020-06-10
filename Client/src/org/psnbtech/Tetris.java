@@ -19,6 +19,9 @@ import hoon2woon2.Client;
 import hoon2woon2.LoginFrame;
 import hoon2woon2.RankPanel;
 import hoon2woon2.Items.ItemManager;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 
 /**
@@ -206,8 +209,9 @@ public class Tetris extends JFrame implements ActionListener{
 	JMenuItem item_item = new JMenuItem("Item");
 	//socket program
 	private Client client;
-	private static int user = -1;
-	private static String userid = "";
+	
+	
+	public LoginFrame loginframe;
 
 	/*
 	 * writer: cha seung hoon
@@ -217,6 +221,19 @@ public class Tetris extends JFrame implements ActionListener{
 	private boolean isHardDrop = false;
 	private boolean beforeVal = false;
 	
+   /*
+    * writer: Jihoon Kim
+    * media
+    * 2020.06.09
+    * */
+    final JFXPanel fxPanel = new JFXPanel();
+    Media s_gameover = new Media(Tetris.class.getResource("/org/psnbtech/resources/gameover.mp3").toString());
+    Media s_tMove = new Media(Tetris.class.getResource("/org/psnbtech/resources/t_move.wav").toString());
+    Media s_tharddrop = new Media(Tetris.class.getResource("/org/psnbtech/resources/t_harddrop.wav").toString());
+    Media s_trotate = new Media(Tetris.class.getResource("/org/psnbtech/resources/t_rotate.wav").toString());
+    Media s_hold = new Media(Tetris.class.getResource("/org/psnbtech/resources/hold.wav").toString());
+  
+
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
 	 * and adds a controller listener.
@@ -232,6 +249,8 @@ public class Tetris extends JFrame implements ActionListener{
 		setResizable(true);
 		
 		client = c;
+		
+		//loginframe = new LoginFrame(this, client);
 		
 		/*
 		 * Initialize the BoardPanel and SidePanel instances.
@@ -298,6 +317,8 @@ public class Tetris extends JFrame implements ActionListener{
 				case KeyEvent.VK_DOWN:
 					if(!isPaused && dropCooldown == 0) {
 						logicTimer.setCyclesPerSecond(25.0f);
+						MediaPlayer p = new MediaPlayer(s_tMove);
+						p.play();
 					}
 					break;
 
@@ -315,11 +336,15 @@ public class Tetris extends JFrame implements ActionListener{
 					if(reverseIndex){
 						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
 							currentCol++;
+							MediaPlayer p = new MediaPlayer(s_tMove);
+							p.play();
 						}
 					}
 					else{
 						if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
 							currentCol--;
+							MediaPlayer p = new MediaPlayer(s_tMove);
+							p.play();
 						}
 					}
 					break;
@@ -333,11 +358,15 @@ public class Tetris extends JFrame implements ActionListener{
 					if(reverseIndex){
 						if(!isPaused && board.isValidAndEmpty(currentType, currentCol - 1, currentRow, currentRotation)&&!beforeVal) {
 							currentCol--;
+							MediaPlayer p = new MediaPlayer(s_tMove);
+							p.play();
 						}
 					}
 					else{
 						if(!isPaused && board.isValidAndEmpty(currentType, currentCol + 1, currentRow, currentRotation)&&!beforeVal) {
 							currentCol++;
+							MediaPlayer p = new MediaPlayer(s_tMove);
+							p.play();
 						}
 					}
 					break;
@@ -357,6 +386,8 @@ public class Tetris extends JFrame implements ActionListener{
 					if(rotationIndex){
 						if(!isPaused) {
 							rotatePiece((currentRotation == 0) ? 3 : currentRotation - 1);
+							MediaPlayer p = new MediaPlayer(s_trotate);
+							p.play();
 						}
 					}
 					break;
@@ -371,6 +402,8 @@ public class Tetris extends JFrame implements ActionListener{
 					if(rotationIndex){
 						if(!isPaused) {
 							rotatePiece((currentRotation == 3) ? 0 : currentRotation + 1);
+							MediaPlayer p = new MediaPlayer(s_trotate);
+							p.play();
 						}
 					}
 					break;
@@ -404,8 +437,10 @@ public class Tetris extends JFrame implements ActionListener{
 				 * 2020.04.26
 				 * hold function
 				 */
-				case KeyEvent.VK_C:
+				case KeyEvent.VK_SHIFT:
 					holdTile();
+					MediaPlayer p = new MediaPlayer(s_hold);
+					p.play();
 					break;
 				
 				/*
@@ -422,6 +457,8 @@ public class Tetris extends JFrame implements ActionListener{
 					}
 					currentRow+=cnt-1;
 					updateGame();
+					MediaPlayer p1 = new MediaPlayer(s_tharddrop);
+					p1.play();
 					break;
 				}
 			}
@@ -445,6 +482,7 @@ public class Tetris extends JFrame implements ActionListener{
 			}
 			
 		});
+		
 		
 		/*
 		 * Here we resize the frame to hold the BoardPanel and SidePanel instances,
@@ -990,19 +1028,38 @@ public class Tetris extends JFrame implements ActionListener{
 		 * then start login with client
 		 */
 		if(event.getSource() == item_login) {
-			if(user == -1) {
+			if(!client.isLogined()) {
 				if(!isGameOver && !isNewGame) {
 					isPaused = !isPaused;
 					logicTimer.setPaused(isPaused);
 				}
-				LoginFrame l = new LoginFrame(this, client);
+				
+				if(loginframe == null)
+					loginframe = new LoginFrame(this, client);
+				//loginframe.setVisible(true);
+				//loginframe.setLocation(getLocation().x+getSize().width/2-180, getLocation().y+getSize().height/2-60);
 			}
 		}
 		if(event.getSource() == item_logout) {
-			if(user != -1) {
-				user = -1;
-				userid = "";
-			}
+			client.logout();
+		}
+		if(event.getSource() == item_basic) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 0;
+		}
+		if(event.getSource() == item_disturb) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 2;
+		}
+		if(event.getSource() == item_item) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 1;
 		}
 		if(event.getSource() == item_basic) {
 			isPaused = false;

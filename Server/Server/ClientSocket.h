@@ -17,6 +17,7 @@ class ClientSocket
 {
 private:
 	bool login();
+	bool regist();
 
 public:
     ClientSocket(int, sockaddr_in, Server&);
@@ -39,10 +40,10 @@ private:
 	std::string userid;
 	std::string pw;
 
-	const char* sqlhost;
-	const char* sqluser;
-	const char* sqlpw;
-	const char* sqldb;
+	const char* sqlhost = "";
+	const char* sqluser = "";
+	const char* sqlpw = "";
+	const char* sqldb = "";
 
 	MYSQL* sqlconnection = NULL;
 	MYSQL sqlconn;
