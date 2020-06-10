@@ -209,8 +209,9 @@ public class Tetris extends JFrame implements ActionListener{
 	JMenuItem item_item = new JMenuItem("Item");
 	//socket program
 	private Client client;
-	private static int user = -1;
-	private static String userid = "";
+	
+	
+	public LoginFrame loginframe;
 
 	/*
 	 * writer: cha seung hoon
@@ -256,6 +257,8 @@ public class Tetris extends JFrame implements ActionListener{
 		p_b.play();
 		
 		client = c;
+		
+		//loginframe = new LoginFrame(this, client);
 		
 		/*
 		 * Initialize the BoardPanel and SidePanel instances.
@@ -442,7 +445,7 @@ public class Tetris extends JFrame implements ActionListener{
 				 * 2020.04.26
 				 * hold function
 				 */
-				case KeyEvent.VK_C:
+				case KeyEvent.VK_SHIFT:
 					holdTile();
 					MediaPlayer p = new MediaPlayer(s_hold);
 					p.play();
@@ -487,6 +490,7 @@ public class Tetris extends JFrame implements ActionListener{
 			}
 			
 		});
+		
 		
 		/*
 		 * Here we resize the frame to hold the BoardPanel and SidePanel instances,
@@ -1032,19 +1036,38 @@ public class Tetris extends JFrame implements ActionListener{
 		 * then start login with client
 		 */
 		if(event.getSource() == item_login) {
-			if(user == -1) {
+			if(!client.isLogined()) {
 				if(!isGameOver && !isNewGame) {
 					isPaused = !isPaused;
 					logicTimer.setPaused(isPaused);
 				}
-				LoginFrame l = new LoginFrame(this, client);
+				
+				if(loginframe == null)
+					loginframe = new LoginFrame(this, client);
+				//loginframe.setVisible(true);
+				//loginframe.setLocation(getLocation().x+getSize().width/2-180, getLocation().y+getSize().height/2-60);
 			}
 		}
 		if(event.getSource() == item_logout) {
-			if(user != -1) {
-				user = -1;
-				userid = "";
-			}
+			client.logout();
+		}
+		if(event.getSource() == item_basic) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 0;
+		}
+		if(event.getSource() == item_disturb) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 2;
+		}
+		if(event.getSource() == item_item) {
+			isPaused = false;
+			isGameOver = false;
+			isNewGame = true;
+			mode = 1;
 		}
 		if(event.getSource() == item_basic) {
 			isPaused = false;
