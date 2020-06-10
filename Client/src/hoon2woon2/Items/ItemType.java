@@ -1,4 +1,4 @@
-package org.psnbtech.Items;
+package hoon2woon2.Items;
 
 public abstract class ItemType {
 

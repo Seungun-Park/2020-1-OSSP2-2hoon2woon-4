@@ -1,4 +1,4 @@
-package org.psnbtech.Items;
+package hoon2woon2.Items;
 
 public class Item_DeleteSomeLine extends ItemType {
     Item_DeleteSomeLine(int x, int y, ItemManager itemManager) {
