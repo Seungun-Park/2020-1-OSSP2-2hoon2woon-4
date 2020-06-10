@@ -18,9 +18,12 @@ import java.security.NoSuchAlgorithmException;
  */
 
 public class Client {
+<<<<<<< HEAD
 
 	// 占쎌뿫占쎈뻻嚥∽옙..占쎌궥野꺿뫀�꼦占쎌벉..! gowoon-choi
 
+=======
+>>>>>>> upstream/master
 	private static final long serialVersionUID = -3752491464582754341L;
 	
 	static Socket socket;
