@@ -1,6 +1,6 @@
 package org.psnbtech;
 
-import org.psnbtech.Items.ItemManager;
+import hoon2woon2.Items.ItemManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -275,13 +275,18 @@ public class BoardPanel extends JPanel {
 				setTile(col, row + 1, getTile(col, row));
 			}
 		}
+    
+		if(tiles[line][0] != TileType.RemovableLine ){
+			itemManager.actionItem(line);
 
-		itemManager.deleteItem(line);
-
-		for(int i=0; i<itemManager.getItems().size(); i++){
-			if(itemManager.getItems().get(i).getY() < line){
-				itemManager.getItems().get(i).setY(itemManager.getItems().get(i).getY()+1);
+			for(int i=0; i<itemManager.getItems().size(); i++){
+				if(itemManager.getItems().get(i).getY() < line){
+					itemManager.getItems().get(i).setY(itemManager.getItems().get(i).getY()+1);
+				}
 			}
+		}
+		else{
+			itemManager.deleteItem(line);
 		}
 		return true;
 	}
@@ -303,7 +308,7 @@ public class BoardPanel extends JPanel {
 	 * @param y The row.
 	 * @param type The value to set to the tile to.
 	 */
-	private void setTile(int  x, int y, TileType type) {
+	public void setTile(int  x, int y, TileType type) {
 		tiles[y][x] = type;
 	}
 		
@@ -421,13 +426,12 @@ public class BoardPanel extends JPanel {
 					g.drawLine(x * TILE_SIZE, 0, x * TILE_SIZE, VISIBLE_ROW_COUNT * TILE_SIZE);
 				}
 			}
-
+			itemManager = tetris.getItemManager();
+			for(int i=0; i<itemManager.getItems().size(); i++){
+				drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE + TILE_SIZE/4,(itemManager.getItems().get(i).getY()-HIDDEN_ROW_COUNT)*TILE_SIZE + TILE_SIZE/2,itemManager.getItems().get(i).getItemIndex(),g);
+			}
 		}
 
-		itemManager = tetris.getItemManager();
-		for(int i=0; i<itemManager.getItems().size(); i++){
-			drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE + TILE_SIZE/4,(itemManager.getItems().get(i).getY()-HIDDEN_ROW_COUNT)*TILE_SIZE + TILE_SIZE/2,itemManager.getItems().get(i).getItemIndex(),g);
-		}
 		
 		/*
 		 * Draw the outline.
@@ -496,6 +500,8 @@ public class BoardPanel extends JPanel {
 				setTile(col, row - 1, getTile(col, row));
 			}
 		}
+
+		itemManager.replaceItem(1);
 
 		for(int col=0; col<COL_COUNT; col++){
 			tiles[ROW_COUNT-1][col] = TileType.values()[7];
