@@ -91,6 +91,30 @@ public class Client {
 		}
 		return false;
 	}
+
+	public boolean register(String id, char [] pw) {   //chacha
+		try {
+		   if(!socket.isConnected()) return false;
+		   send("register");
+		   send(id);
+		   buf = new byte[256];
+		   is.read(buf);
+		   
+		   MessageDigest sh = MessageDigest.getInstance("SHA-256");
+		   sh.reset();
+		   sh.update((new String(pw)).getBytes("UTF-8"));
+		   os.write(sh.digest());
+		   os.flush();
+		   
+		   buf = new byte[256];
+		   is.read(buf);
+		   System.out.println(new String(buf));
+		} catch(IOException e) {
+		   e.printStackTrace();
+		} catch(NoSuchAlgorithmException e) {
+		   e.printStackTrace();
+		}return false;
+	 }
 	
 	public boolean send(String message) {
 		try {
