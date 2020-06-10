@@ -18,12 +18,7 @@ import java.security.NoSuchAlgorithmException;
  */
 
 public class Client {
-<<<<<<< HEAD
 
-	// 占쎌뿫占쎈뻻嚥∽옙..占쎌궥野꺿뫀�꼦占쎌벉..! gowoon-choi
-
-=======
->>>>>>> upstream/master
 	private static final long serialVersionUID = -3752491464582754341L;
 	
 	static Socket socket;
@@ -39,9 +34,10 @@ public class Client {
 	
 	public Client(){
 		try {
+			System.out.println(System.getProperties());
 			socket = new Socket();
-			prop.load(new FileInputStream(inipath));
-			
+			prop.load(new FileInputStream("./"+inipath));
+			System.out.println(System.getProperties());
 			connect();
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -51,7 +47,7 @@ public class Client {
 	public boolean connect() {
 		try {
 			if(!(socket.isConnected())) {
-				socket.connect(new InetSocketAddress(prop.getProperty("ip"), Integer.parseInt(prop.getProperty("port"))));
+				socket.connect(new InetSocketAddress("54.180.192.185", 20204));
 				os = socket.getOutputStream();
 				is = socket.getInputStream();
 		
