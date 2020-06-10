@@ -1,11 +1,15 @@
 package hoon2woon2;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -31,10 +35,13 @@ public class LoginFrame extends JFrame implements ActionListener{
 	public static JButton btn_register = new JButton("Register");
 	
 	Client client;
+	Tetris tetris;
 	
 	public LoginFrame(Tetris t, Client c) {
 		super("login");
+		
 		client = c;
+		tetris = t;
 		
 		pn_content.setLayout(null);
 		
@@ -56,6 +63,15 @@ public class LoginFrame extends JFrame implements ActionListener{
 		pn_content.add(btn_register);
 		add(pn_content);
 		
+		addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e) {
+				JFrame frame = (JFrame)e.getWindow();
+				client = null;
+				tetris.loginframe = null;
+				frame.dispose();
+			}
+		});
+		
 		setSize(360, 120);
 		setLocation(t.getLocation().x+t.getSize().width/2-180, t.getLocation().y+t.getSize().height/2-60);
 		setResizable(false);
@@ -64,7 +80,20 @@ public class LoginFrame extends JFrame implements ActionListener{
 	
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource() == btn_login) {
-			client.login(tf_id.getText(), pf_pw.getPassword());
+			if(client.login(tf_id.getText(), pf_pw.getPassword())) {
+				JOptionPane.showMessageDialog(null, "login success");
+				client = null;
+				tetris.loginframe = null;
+				dispose();
+			}
+			else
+				JOptionPane.showMessageDialog(null, "login failed");
+		}
+		if(event.getSource() == btn_register) {
+			if(client.regist(tf_id.getText(), pf_pw.getPassword()))
+				JOptionPane.showMessageDialog(null, "register success");
+			else
+				JOptionPane.showMessageDialog(null, "register failed");
 		}
 	}
 }

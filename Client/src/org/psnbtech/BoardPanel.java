@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -274,7 +275,7 @@ public class BoardPanel extends JPanel {
 				setTile(col, row + 1, getTile(col, row));
 			}
 		}
-
+    
 		if(tiles[line][0] != TileType.RemovableLine ){
 			itemManager.actionItem(line);
 
@@ -425,7 +426,6 @@ public class BoardPanel extends JPanel {
 					g.drawLine(x * TILE_SIZE, 0, x * TILE_SIZE, VISIBLE_ROW_COUNT * TILE_SIZE);
 				}
 			}
-
 			itemManager = tetris.getItemManager();
 			for(int i=0; i<itemManager.getItems().size(); i++){
 				drawItem(itemManager.getItems().get(i).getX()*TILE_SIZE + TILE_SIZE/4,(itemManager.getItems().get(i).getY()-HIDDEN_ROW_COUNT)*TILE_SIZE + TILE_SIZE/2,itemManager.getItems().get(i).getItemIndex(),g);
