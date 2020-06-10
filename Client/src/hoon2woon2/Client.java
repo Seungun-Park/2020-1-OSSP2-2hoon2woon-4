@@ -19,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Client {
 
-	// 임시로..옮겨놓음..! gowoon-choi
+	// �엫�떆濡�..�삷寃⑤넃�쓬..! gowoon-choi
 	private static String userid = "";
 
 	private static final long serialVersionUID = -3752491464582754341L;
@@ -90,6 +90,29 @@ public class Client {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	public boolean register(String id, char [] pw) {	//cha-seung-hoon 2020.06.10 
+		try {
+			if(!socket.isConnected()) return false;
+			send("register");
+			send(id);
+			buf = new byte[256];
+			is.read(buf);
+			
+			MessageDigest sh = MessageDigest.getInstance("SHA-256");
+			sh.reset();
+			sh.update((new String(pw)).getBytes("UTF-8"));
+			os.write(sh.digest());
+			os.flush();
+			
+			buf = new byte[256];
+			is.read(buf);
+			System.out.println(new String(buf));
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch(NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}return false;
 	}
 	
 	public boolean send(String message) {
