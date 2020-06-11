@@ -38,7 +38,7 @@ public class Client {
 	
 	public Client(){
 		try {
-			System.out.println(System.getProperty("user.dir"));
+			//System.out.println(System.getProperty("user.dir"));
 			socket = new Socket();
 
 			prop.load(new FileInputStream(inipath));

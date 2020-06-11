@@ -229,15 +229,14 @@ public class Tetris extends JFrame implements ActionListener{
     * media
     * 2020.06.09
     * */
-    final JFXPanel fxPanel = new JFXPanel();
-	Media s_backgroundmusic = new Media(Tetris.class.getResource("/org/psnbtech/resources/backgroundmusic.mp3").toString());
-    Media s_gameover = new Media(Tetris.class.getResource("/org/psnbtech/resources/gameover.mp3").toString());
-    Media s_tMove = new Media(Tetris.class.getResource("/org/psnbtech/resources/t_move.wav").toString());
-    Media s_tharddrop = new Media(Tetris.class.getResource("/org/psnbtech/resources/t_harddrop.wav").toString());
-    Media s_trotate = new Media(Tetris.class.getResource("/org/psnbtech/resources/t_rotate.wav").toString());
-    Media s_hold = new Media(Tetris.class.getResource("/org/psnbtech/resources/hold.wav").toString());
-  
-
+	final JFXPanel fxPanel = new JFXPanel();
+	Media s_backgroundmusic;
+	Media s_gameover;
+	Media s_tMove;
+	Media s_tharddrop;
+	Media s_trotate;
+	Media s_hold;
+	
 	/**
 	 * Creates a new Tetris instance. Sets up the window's properties,
 	 * and adds a controller listener.
@@ -251,13 +250,23 @@ public class Tetris extends JFrame implements ActionListener{
 		setLayout(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(true);
-
+		
+		try {
+	    	s_backgroundmusic = new Media(getClass().getResource("resources/backgroundmusic.mp3").toString());
+	    	s_gameover = new Media(Tetris.class.getResource("resources/gameover.mp3").toString());
+	    	s_tMove = new Media(Tetris.class.getResource("resources/t_move.wav").toString());
+	    	s_tharddrop = new Media(Tetris.class.getResource("resources/t_harddrop.wav").toString());
+	    	s_trotate = new Media(Tetris.class.getResource("resources/t_rotate.wav").toString());
+	    	s_hold = new Media(Tetris.class.getResource("resources/hold.wav").toString());
 		/*
 		 * play music
 		 */
-		MediaPlayer p_b = new MediaPlayer(s_backgroundmusic);
-		p_b.setVolume(0.5);
-		p_b.play();
+	    	MediaPlayer p_b = new MediaPlayer(s_backgroundmusic);
+	    	p_b.setVolume(0.5);
+	    	p_b.play();
+		} catch(Exception e) {
+	    	e.printStackTrace();
+	    }
 
 		client = c;
 		

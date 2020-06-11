@@ -37,24 +37,24 @@ public class Main extends JFrame{
 
 	public static int num = 0;
 	BufferedImage img = null;
-	ImageIcon start1 = new ImageIcon("C:/git/2020-1-OSSP2-2hoon2woon-4-3/Client/src/hoon2woon2/Images/start1.jpg");
-	ImageIcon start2 = new ImageIcon("C:/git/2020-1-OSSP2-2hoon2woon-4-3/Client/src/hoon2woon2/Images/start2.jpg");
+	ImageIcon start1 = new ImageIcon("Images/start1.jpg");
+	ImageIcon start2 = new ImageIcon("Images/start2.jpg");
 
 
 	public Main(){
-		this.setTitle("Tetris main");// 제목
+		this.setTitle("Tetris main");// �젣紐�
 		// Dimension dimen = Toolkit.getDefaultToolkit().getScreenSize();
 		// int w = (int)((dimen.getWidth()) / 2.5);
 		// int h = (int)((dimen.getHeight()) / 1.5);
 
 		this.setSize(640,680);
-		this.setVisible(true);// 생성
+		this.setVisible(true);// �깮�꽦
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		// this.setResizable(false);
 		this.setLocationRelativeTo(null);
 
 		try {
-			img = ImageIO.read(new File("C:/git/2020-1-OSSP2-2hoon2woon-4-3/Client/src/hoon2woon2/Images/Main_Image.jpg"));
+			img = ImageIO.read(new File("Images/Main_Image.jpg"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "No Image");
 			System.exit(0);	
@@ -109,14 +109,14 @@ public class Main extends JFrame{
 		public void mouseReleased(MouseEvent e) {
 		}
 	
-		@Override//마우스가 버튼 안으로 들어오면 빨간색으로 바뀜
+		@Override//留덉슦�뒪媛� 踰꾪듉 �븞�쑝濡� �뱾�뼱�삤硫� 鍮④컙�깋�쑝濡� 諛붾��
 		public void mouseEntered(MouseEvent e) {
 			JButton b = (JButton)e.getSource();
 			b.setIcon(start2);
 			b.setVisible(true);
 		}
 	
-		@Override//마우스가 버튼 밖으로 나가면 노란색으로 바뀜
+		@Override//留덉슦�뒪媛� 踰꾪듉 諛뽰쑝濡� �굹媛�硫� �끂���깋�쑝濡� 諛붾��
 		public void mouseExited(MouseEvent e) {
 			JButton b = (JButton)e.getSource();
 			b.setIcon(start1);
